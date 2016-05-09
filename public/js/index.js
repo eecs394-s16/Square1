@@ -13,21 +13,25 @@ var myFirebaseRef = new Firebase('https://square1.firebaseio.com');
 
 myFirebaseRef.set(
 {
-  WoodPanel: {
+  	"0" : {
+
+  	Part: "WoodPanel", 
     Sourcing : {
    		Cost: "20",
     	link: "http:wood",
     	MaxLeadTime: "7" 
-    },
+    }
   },
-  Battery: {
+  "1" :{
+  	Part: "Battery",
     Sourcing : {
     	Cost: "7.3" ,
     	link: "http:Battery" ,
     	MaxLeadTime: "20" 
     }
   },
-  BluetoothChip: {
+  "2": {
+	 Part: "BluetoothChip",
      Sourcing: {
     	Cost: "3",
     	link: "http:Bluetooth",
@@ -52,10 +56,11 @@ myFirebaseRef.on("value", function(snapshot) {
 	var cell2 = row.insertCell(1);
 	var cell3 = row.insertCell(2);
 	var cell4 = row.insertCell(3);
-
-	cell1.innerHTML = newItem.Sourcing.Cost;
-	cell2.innerHTML = newItem.Sourcing.link;
-	cell3.innerHTML = newItem.Sourcing.MaxLeadTime;
+    var cell5 = row.insertCell(4);
+    cell1.innerHTML = newItem.Part;
+	cell2.innerHTML = newItem.Sourcing.Cost;
+	cell3.innerHTML = newItem.Sourcing.link;
+	cell4.innerHTML = newItem.Sourcing.MaxLeadTime;
 	// cell4.innerHTML = newItem.
     // console.log("The " + data.key() + " dinosaur's score is " + data.val());
     // document.getElementById("demo").innerHTML = data.val();
