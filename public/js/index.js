@@ -10,6 +10,7 @@ var myFirebaseRef = new Firebase('https://square1.firebaseio.com');
 //     full_name: "Grace Hopper"
 //   }
 // });
+
 myFirebaseRef.set(
 {
   WoodPanel: {
@@ -46,10 +47,12 @@ myFirebaseRef.on("value", function(snapshot) {
   	var newItem = data.val();
 
 	var row = table.insertRow(0);
+	// table.setAttribute("align","center");
 	var cell1 = row.insertCell(0);
 	var cell2 = row.insertCell(1);
 	var cell3 = row.insertCell(2);
 	var cell4 = row.insertCell(3);
+
 	cell1.innerHTML = newItem.Sourcing.Cost;
 	cell2.innerHTML = newItem.Sourcing.link;
 	cell3.innerHTML = newItem.Sourcing.MaxLeadTime;
