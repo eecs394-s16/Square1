@@ -1,0 +1,25 @@
+[ 
+  { "Part": "WoodPanel", 
+    "Sourcing" : {
+     "Cost": "20",
+      "link": "http:wood",
+      "MaxLeadTime": "7" 
+    }
+  },
+  {
+    "Part": "Battery",
+    "Sourcing" : {
+      "Cost": "7.3" ,
+      "link": "http:Battery" ,
+      "MaxLeadTime": "20" 
+    }
+  },
+  {
+   "Part": "BluetoothChip",
+     "Sourcing": {
+      "Cost": "3",
+      "link": "http:Bluetooth",
+      "MaxLeadTime": "20" 
+    }
+  }
+]

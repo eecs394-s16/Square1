@@ -1,44 +1,18 @@
 var myFirebaseRef = new Firebase('https://square1.firebaseio.com');
 
-// myFirebaseRef.set({
-//   alanisawesome: {
-//     date_of_birth: "June 23, 1912",
-//     full_name: "Alan Turing"
-//   },
-//   gracehop: {
-//     date_of_birth: "December 9, 1906",
-//     full_name: "Grace Hopper"
-//   }
-// });
-
-myFirebaseRef.set(
-{
-  	"0" : {
-
-  	Part: "WoodPanel", 
-    Sourcing : {
-   		Cost: "20",
-    	link: "http:wood",
-    	MaxLeadTime: "7" 
-    }
-  },
-  "1" :{
-  	Part: "Battery",
-    Sourcing : {
-    	Cost: "7.3" ,
-    	link: "http:Battery" ,
-    	MaxLeadTime: "20" 
-    }
-  },
-  "2": {
-	 Part: "BluetoothChip",
-     Sourcing: {
-    	Cost: "3",
-    	link: "http:Bluetooth",
-    	MaxLeadTime: "20" 
-    }
-   }
+// reading local json file 
+$.getJSON("js/data.json", function(json) {
+    // console.log(json); // this will show the info it in firebug console
+	for(var key in json) {
+		var newDataRef = myFirebaseRef.push();
+		// console.log(json[0].Part);
+		newDataRef.set({
+			Part : json[key].Part,
+			Sourcing : json[key].Sourcing
+		});
+	}
 });
+
 
 myFirebaseRef.on("value", function(snapshot) {
   // alert(snapshot.val());  // Alerts "San Francisco"
