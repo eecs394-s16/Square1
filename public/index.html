@@ -144,6 +144,7 @@
                                     </div>
 
                                     <br><br>
+                                    
                                     <div class="col-lg-6">
                                         <div class="panel panel-default">
                                             <div class="panel-heading"><b>
@@ -180,12 +181,68 @@
                                                         <div class ="foo wine"></div>
                                                         <div style ="float:right">
                                                         <button onclick="view_more()" class ="glyphicon glyphicon-chevron-down"></button></div>
-
                                                 </td>
+
+                                                
                                                 </tr>
+                                                <p>
+                                                <h4 id = "demo"></h4></p>
                                             </thead>
 
-                                            <tbody id = "dataTable"></tbody>
+                                            <tbody id = "order-table"></tbody>
+                                        </table>      
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div></br></br>
+
+
+
+                                    <div class="col-lg-6">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading"><b>
+                                                
+                                Past Orders
+                            </div> </b>
+
+                            <div class="panel-body">       
+                                <div class= "table-responsive">
+                                    <table class="table">
+                                            <thead> 
+                                                <tr>
+                                                    <th> Order Details</th>
+                                                    <th>Delivery Date </th>
+                                                    <th> Status</th>
+
+                                                </tr>
+
+                                                <tr>
+                                                    <td> 3 Blue Speakers to 1116 Garnett, Evanston</td>
+                                                    <td> 03/04/2016</td>
+                                                    <td>
+                                                        <div class ="glyphicon glyphicon-ok">
+                                                        </div>
+                                                </td>
+
+                                                
+                                                </tr>
+
+                                                <tr>
+                                                    <td> 2 Red Speakers to 2012 Sheridan Road, Evanston</td>
+                                                    <td> 02/01/2016</td>
+                                                    <td>
+                                                        <div class ="glyphicon glyphicon-ok">
+                                                        </div>
+                                                </td>
+
+                                                
+                                                </tr>
+                                                <p>
+                                                <h4 id = "demo"></h4></p>
+                                            </thead>
+
+                                            <tbody id = "order-table"></tbody>
                                         </table>      
                                 </div>
                             </div>
@@ -205,7 +262,30 @@
 
 
 
-    
+    <script>
+
+    var show_text = false;
+
+
+    function view_more() {
+        document.getElementById("demo").style.color = "red";
+        if (show_text ==false){
+            // document.write("\n")
+            document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer";
+            show_text = true
+
+        }
+        else
+            document.getElementById("demo").innerHTML ="";
+            
+
+
+        // <p>Need three more chips</p>
+        // document.write("view more button clicked");
+        
+    }
+
+    </script>
     <!-- /#wrapper -->
 
     <!-- jQuery -->

@@ -23,16 +23,42 @@ myFirebaseRef.set(
     	// Order: "False" 
     }
   },
+
   "1" :{
   	Part: "Battery",
     Sourcing : {
     	Cost: "7.3" ,
-    	Inventory: "20" ,
+    	Inventory: "8" ,
       Link:"http://www.batteryjunction.com/energizer-a27bpz.html?gclid=CJbD647EycwCFQQbaQodKocPgw"
     	// Order: "False" 
     }
   },
-  "2": {
+
+  "2" : {
+
+    Part: "Control Switch Panel", 
+    Sourcing : {
+      Cost: "4",
+      Inventory: "12",
+      Link:"http://www.htd.com/Products/Speaker-Selectors/SS41-Speaker-Selector?gclid=CN71vd3EycwCFQ4zaQodToMPhA"
+      // Order: "False" 
+    }
+  },
+
+  "3" : {
+
+    Part: "Transducer", 
+    Sourcing : {
+      Cost: "6",
+      Inventory: "12",
+      Link:"http://www.digikey.com/product-detail/en/CEB-20D64/102-1126-ND/412385?WT.mc_id=IQ_7595_G_pla412385&wt.srch=1&wt.medium=cpc&WT.srch=1&gclid=CLO14ZLFycwCFQsDaQodFdsP7A"
+      // Order: "False" 
+    }
+  },
+
+
+
+  "4": {
 	 Part: "Bluetooth Chip",
      Sourcing: {
     	Cost: "3",
@@ -60,6 +86,11 @@ myFirebaseRef.on("value", function(snapshot) {
 	var cell3 = row.insertCell(2);
 	var cell4 = row.insertCell(3);
   var cell5 = row.insertCell(4);
+  var cell6 = row.insertCell(5);
+  var cell7 = row.insertCell(6);
+  var cell8 = row.insertCell(7);
+  var cell9 = row.insertCell(8);
+  var cell10 = row.insertCell(9);
   cell1.innerHTML = newItem.Part;
 	cell2.innerHTML = newItem.Sourcing.Cost;
 	cell3.innerHTML = newItem.Sourcing.Inventory;
