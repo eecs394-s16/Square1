@@ -2,7 +2,7 @@
   { "Part": "WoodPanel", 
     "Sourcing" : {
      "Cost": "20",
-      "link": "http:wood",
+      "Inventory": "10",
       "MaxLeadTime": "7" 
     }
   },

@@ -15,27 +15,30 @@ myFirebaseRef.set(
 {
   	"0" : {
 
-  	Part: "WoodPanel", 
+  	Part: "Wood Panel", 
     Sourcing : {
    		Cost: "20",
-    	link: "http:wood",
-    	MaxLeadTime: "7" 
+    	Inventory: "10",
+      Link:"http://www.homedepot.com/p/Future-Foam-2-in-Thick-Multipurpose-Foam-10030BULK2/203837080?cm_mmc=SEM%7CTHD%7Cgoogle%7CD23+Carpet&mid=sDIJWZ2mP%7Cdc_mtid_8903pdd25182_pcrid_63605926408_pkw__pmt__product_203837080&gclid=CMbQgfbEycwCFQktaQodrVMOLQ"
+    	// Order: "False" 
     }
   },
   "1" :{
   	Part: "Battery",
     Sourcing : {
     	Cost: "7.3" ,
-    	link: "http:Battery" ,
-    	MaxLeadTime: "20" 
+    	Inventory: "20" ,
+      Link:"http://www.homedepot.com/p/Future-Foam-2-in-Thick-Multipurpose-Foam-10030BULK2/203837080?cm_mmc=SEM%7CTHD%7Cgoogle%7CD23+Carpet&mid=sDIJWZ2mP%7Cdc_mtid_8903pdd25182_pcrid_63605926408_pkw__pmt__product_203837080&gclid=CMbQgfbEycwCFQktaQodrVMOLQ"
+    	// Order: "False" 
     }
   },
   "2": {
-	 Part: "BluetoothChip",
+	 Part: "Bluetooth Chip",
      Sourcing: {
     	Cost: "3",
-    	link: "http:Bluetooth",
-    	MaxLeadTime: "20" 
+    	Inventory: "12",
+      Link:"http://www.homedepot.com/p/Future-Foam-2-in-Thick-Multipurpose-Foam-10030BULK2/203837080?cm_mmc=SEM%7CTHD%7Cgoogle%7CD23+Carpet&mid=sDIJWZ2mP%7Cdc_mtid_8903pdd25182_pcrid_63605926408_pkw__pmt__product_203837080&gclid=CMbQgfbEycwCFQktaQodrVMOLQ"
+    	// Order: "False" 
     }
    }
 });
@@ -56,11 +59,14 @@ myFirebaseRef.on("value", function(snapshot) {
 	var cell2 = row.insertCell(1);
 	var cell3 = row.insertCell(2);
 	var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
-    cell1.innerHTML = newItem.Part;
+  var cell5 = row.insertCell(4);
+  cell1.innerHTML = newItem.Part;
 	cell2.innerHTML = newItem.Sourcing.Cost;
-	cell3.innerHTML = newItem.Sourcing.link;
-	cell4.innerHTML = newItem.Sourcing.MaxLeadTime;
+	cell3.innerHTML = newItem.Sourcing.Inventory;
+  cell4.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button>Order</a></button>'
+  // cell4.innerHTML = '<button onclick='+newItem.Sourcing.Link+'>Order Item</button>'
+
+	// cell4.innerHTML = newItem.Sourcing.Link;
 	// cell4.innerHTML = newItem.
     // console.log("The " + data.key() + " dinosaur's score is " + data.val());
     // document.getElementById("demo").innerHTML = data.val();
