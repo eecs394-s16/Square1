@@ -19,7 +19,7 @@ myFirebaseRef.set(
     Sourcing : {
    		Cost: "20",
     	Inventory: "10",
-      Link:"http://www.homedepot.com/p/Future-Foam-2-in-Thick-Multipurpose-Foam-10030BULK2/203837080?cm_mmc=SEM%7CTHD%7Cgoogle%7CD23+Carpet&mid=sDIJWZ2mP%7Cdc_mtid_8903pdd25182_pcrid_63605926408_pkw__pmt__product_203837080&gclid=CMbQgfbEycwCFQktaQodrVMOLQ"
+      Link:"http://www.joann.com/plywood-sheet-12inx.25inx12in/10177616.html?mkwid=Ispx7X3s%7Cdc&utm_source=google&utm_medium=cpc&utm_term=&utm_campaign=Shopping+-+Crafts&CS_003=10131488&CS_010=%5BProductId%5D&gclid=CLGs1PrDycwCFQ8vaQodC_oBug"
     	// Order: "False" 
     }
   },
@@ -28,7 +28,7 @@ myFirebaseRef.set(
     Sourcing : {
     	Cost: "7.3" ,
     	Inventory: "20" ,
-      Link:"http://www.homedepot.com/p/Future-Foam-2-in-Thick-Multipurpose-Foam-10030BULK2/203837080?cm_mmc=SEM%7CTHD%7Cgoogle%7CD23+Carpet&mid=sDIJWZ2mP%7Cdc_mtid_8903pdd25182_pcrid_63605926408_pkw__pmt__product_203837080&gclid=CMbQgfbEycwCFQktaQodrVMOLQ"
+      Link:"http://www.batteryjunction.com/energizer-a27bpz.html?gclid=CJbD647EycwCFQQbaQodKocPgw"
     	// Order: "False" 
     }
   },
@@ -37,7 +37,7 @@ myFirebaseRef.set(
      Sourcing: {
     	Cost: "3",
     	Inventory: "12",
-      Link:"http://www.homedepot.com/p/Future-Foam-2-in-Thick-Multipurpose-Foam-10030BULK2/203837080?cm_mmc=SEM%7CTHD%7Cgoogle%7CD23+Carpet&mid=sDIJWZ2mP%7Cdc_mtid_8903pdd25182_pcrid_63605926408_pkw__pmt__product_203837080&gclid=CMbQgfbEycwCFQktaQodrVMOLQ"
+      Link:"https://www.adafruit.com/products/1697?gclid=CKXBhKjEycwCFZWFaQod1CUJAw"
     	// Order: "False" 
     }
    }
@@ -70,8 +70,16 @@ myFirebaseRef.on("value", function(snapshot) {
 	// cell4.innerHTML = newItem.
     // console.log("The " + data.key() + " dinosaur's score is " + data.val());
     // document.getElementById("demo").innerHTML = data.val();
+
   });
+
+
 });
+
+//   function view_more() {
+//   alert("I am an alert box!");
+
+// }
 
 // Get a reference to our posts
 // var ref = new Firebase("https://docs-examples.firebaseio.com/web/saving-data/fireblog/posts");
