@@ -90,7 +90,7 @@ myFirebaseRef.on("value", function(snapshot) {
   cell1.innerHTML = newItem.Part;
 	cell2.innerHTML = newItem.Sourcing.Cost;
 	cell3.innerHTML = newItem.Sourcing.Inventory;
-  cell4.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button>Order</a></button>'
+  cell4.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>'
   // cell4.innerHTML = '<button onclick='+newItem.Sourcing.Link+'>Order Item</button>'
 
 	// cell4.innerHTML = newItem.Sourcing.Link;
