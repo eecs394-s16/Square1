@@ -11,10 +11,8 @@ var myFirebaseRef = new Firebase('https://square1.firebaseio.com');
 //   }
 // });
 
-myFirebaseRef.set(
-{
-  	"0" : {
-
+myFirebaseRef.set({
+  "0" : {
   	Part: "Wood Panel", 
     Sourcing : {
    		Cost: "20",
@@ -76,9 +74,7 @@ myFirebaseRef.on("value", function(snapshot) {
   
 
   snapshot.forEach(function(data) {
-  	// 
-  	var newItem = data.val();
-
+  var newItem = data.val();
 	var row = table.insertRow(0);
 	// table.setAttribute("align","center");
 	var cell1 = row.insertCell(0);
@@ -106,6 +102,27 @@ myFirebaseRef.on("value", function(snapshot) {
 
 
 });
+
+var show_text = false;
+
+
+function view_more() {
+    document.getElementById("demo").style.color = "red";
+    if (show_text ==false){
+        // document.write("\n")
+        document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer to restock inventory to fulfill order!";
+        show_text = true
+
+    }
+    else
+        document.getElementById("demo").innerHTML ="";
+        
+
+
+    // <p>Need three more chips</p>
+    // document.write("view more button clicked");
+    
+}
 
 //   function view_more() {
 //   alert("I am an alert box!");

@@ -2,30 +2,6 @@
 <html lang="en">
 
 <head>
-
-    <style>
-    .foo {
-  float: left;
-  width: 20px;
-  height: 20px;
-  /*margin: 5px;*/
-  border: 1px solid rgba(0, 0, 0, .2);
-}
-
-.blue {
-  background: #13b4ff;
-}
-
-.green {
-  background: #008000;
-}
-
-.wine {
-  background: #ae163e;
-}
-
-    </style>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,6 +27,9 @@
 
     <!-- Custom Fonts -->
     <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom -->
+    <link href="css/index.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -121,171 +100,118 @@
                 <div class="col-lg-12">
                     <h1 class="page-header">Audiovert Dashboard</h1>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><b>
+                        <div class="panel-heading">
+                            <b>
                                 Inventory Details
-                        </div> </b>
+                            </b>
+                        </div> 
                         <div class="panel-body">       
-                                <div class= "table-responsive">
-                                    <table class="table">
-                                            <thead> 
-                                                <tr>
-                                                    <th> Part/Material</th>
-                                                    <th> Cost/Item</th>
-                                                    <th> Inventory</th>
-                                                    <th> Order Item</th>
+                            <div class= "table-responsive">
+                                <table class="table">
+                                    <thead> 
+                                        <tr>
+                                            <th> Part/Material</th>
+                                            <th> Cost/Item</th>
+                                            <th> Inventory</th>
+                                            <th> Order Item</th>
+                                        </tr>
+                                    </thead>
 
-                                                </tr>
-                                            </thead>
-
-                                            <tbody id = "dataTable"></tbody>
-                                        </table>
-                                    </div>
-
-                                    <br><br>
-                                    
-                                    <div class="col-lg-6">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><b>
-                                                
-                                Pending Orders
-                            </div> </b>
-
-                            <div class="panel-body">       
-                                <div class= "table-responsive">
-                                    <table class="table">
-                                            <thead> 
-                                                <tr>
-                                                    <th> Order Details</th>
-
-                                                    <th> Deadline </th>
-                                                    <th> Status </th>
-
-                                                </tr>
-
-                                                <tr>
-                                                    <td>4 Speakers to 2303 Sheridan Road, Evanston
-                                                    </td>
-                                                    <td>5/01/2016</td>
-                                                    <td>
-                                                        <div class ="foo green"></div>
-                                                    </td>
-
-                                                </tr>
-
-                                                <tr>
-                                                    <td> 3 Blue Speakers to 1116 Garnett, Evanston</td>
-                                                    <td> 05/05/2016</td>
-                                                    <td>
-                                                        <div class ="foo wine"></div>
-                                                        <div style ="float:right">
-                                                        <button onclick="view_more()" class ="glyphicon glyphicon-chevron-down"></button></div>
-                                                </td>
-
-                                                
-                                                </tr>
-                                                <p>
-                                                <h4 id = "demo"></h4></p>
-                                            </thead>
-
-                                            <tbody id = "order-table"></tbody>
-                                        </table>      
-                                </div>
+                                    <tbody id = "dataTable"></tbody>
+                                </table>
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div></br></br>
 
-
-
-                                    <div class="col-lg-6">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading"><b>
-                                                
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>    
                                 Past Orders
-                            </div> </b>
+                            </b>
+                        </div>
 
-                            <div class="panel-body">       
-                                <div class= "table-responsive">
-                                    <table class="table">
-                                            <thead> 
-                                                <tr>
-                                                    <th> Order Details</th>
-                                                    <!-- <th>Delivery Date </th> -->
-                                                    <th> Delivered?</th>
+                        <div class="panel-body">       
+                            <div class= "table-responsive">
+                                <table class="table">
+                                    <thead> 
+                                        <tr>
+                                            <th> Order Details</th>
+                                            <!-- <th>Delivery Date </th> -->
+                                            <th> Delivered?</th>
+                                        </tr>
 
-                                                </tr>
+                                        <tr>
+                                            <td> 3 Blue Speakers to 1116 Garnett, Evanston</td>
+                                            <!-- <td> 03/04/2016</td> -->
+                                            <td>
+                                                <div class ="glyphicon glyphicon-ok"></div>
+                                            </td>
+                                        </tr>
 
-                                                <tr>
-                                                    <td> 3 Blue Speakers to 1116 Garnett, Evanston</td>
-                                                    <!-- <td> 03/04/2016</td> -->
-                                                    <td>
-                                                        <div class ="glyphicon glyphicon-ok">
-                                                        </div>
-                                                </td>
-
-                                                
-                                                </tr>
-
-                                                <tr>
-                                                    <td> 2 Red Speakers to 2012 Sheridan Road, Evanston</td>
-                                                    <!-- <td> 02/01/2016</td> -->
-                                                    <td>
-                                                        <div class ="glyphicon glyphicon-ok">
-                                                        </div>
-                                                </td>
-
-                                                
-                                                </tr>
-                                                <p>
-                                                <h4 id = "demo"></h4></p>
-                                            </thead>
-
-                                            <tbody id = "order-table"></tbody>
-                                        </table>      
-                                </div>
+                                        <tr>
+                                            <td> 2 Red Speakers to 2012 Sheridan Road, Evanston</td>
+                                            <!-- <td> 02/01/2016</td> -->
+                                            <td>
+                                                <div class ="glyphicon glyphicon-ok"></div>
+                                            </td>
+                                        </tr>
+                                        <p><h4 id = "demo"></h4></p>
+                                    </thead>
+                                    <tbody id = "order-table"></tbody>
+                                </table>      
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div></br></br>
 
-                                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>         
+                                Pending Orders
+                            </b>
+                        </div>
+                        <div class="panel-body">       
+                            <div class= "table-responsive">
+                                <table class="table">
+                                    <thead> 
+                                        <tr>
+                                            <th> Order Details</th>
+                                            <th> Deadline </th>
+                                            <th> Status </th>
+                                        </tr>
+
+                                        <tr>
+                                            <td>4 Speakers to 2303 Sheridan Road, Evanston</td>
+                                            <td>5/01/2016</td>
+                                            <td>
+                                                <div class ="foo green"></div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td> 3 Blue Speakers to 1116 Garnett, Evanston</td>
+                                            <td> 05/05/2016</td>
+                                            <td>
+                                                <div class ="foo wine"></div>
+                                                <div style ="float:right">
+                                                <button onclick="view_more()" class ="glyphicon glyphicon-chevron-down"></button></div>
+                                            </td>
+                                        </tr>
+                                        <p><h4 id = "demo"></h4></p>
+                                    </thead>
+                                    <tbody id = "order-table"></tbody>
+                                </table>      
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-    <script>
-
-    var show_text = false;
-
-
-    function view_more() {
-        document.getElementById("demo").style.color = "red";
-        if (show_text ==false){
-            // document.write("\n")
-            document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer to restock inventory to fulfill order!";
-            show_text = true
-
-        }
-        else
-            document.getElementById("demo").innerHTML ="";
-            
-
-
-        // <p>Need three more chips</p>
-        // document.write("view more button clicked");
-        
-    }
-
-    </script>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
@@ -299,14 +225,15 @@
 
     <!-- Morris Charts JavaScript -->
     <script src="js/raphael-min.js"></script>
-    <script src="js/morris.min.js"></script>
-    <script src="js/morris-data.js"></script>
+    <!-- <script src="js/morris.min.js"></script> -->
+    <!-- // <script src="js/morris-data.js"></script> -->
 
     <!-- Custom Theme JavaScript -->
     <script src="js/sb-admin-2.js"></script>
 
     <!-- firebase -->
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <!-- custom -->
     <script src="js/index.js"></script>
 
 
