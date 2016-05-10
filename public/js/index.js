@@ -103,19 +103,20 @@ myFirebaseRef.on("value", function(snapshot) {
 
 });
 
+
+
 var show_text = false;
-
-
 function view_more() {
     document.getElementById("demo").style.color = "red";
     if (show_text ==false){
-        // document.write("\n")
-        document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer to restock inventory to fulfill order!";
-        show_text = true
-
+      // document.write("\n")
+      document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer to restock inventory to fulfill order!";
+      show_text = true
     }
-    else
-        document.getElementById("demo").innerHTML ="";
+    else {
+      show_text = false;
+      document.getElementById("demo").innerHTML ="";
+    }
         
 
 
