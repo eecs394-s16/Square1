@@ -111,11 +111,11 @@
                             </div> 
                             <div class="panel-body">       
                                 <div class= "table-responsive">
-                                    <table class="table">
+                                    <table class="table" id ="inventorydetails">
                                         <thead> 
                                             <tr>
                                                 <th> Part/Material</th>
-                                                <th> Cost/Item</th>
+                                                <th> Cost</th>
                                                 <th> Inventory</th>
                                                 <th> Order Item</th>
                                             </tr>
@@ -124,7 +124,10 @@
                                         <tbody id = "dataTable"></tbody>
                                     </table>
                                 </div>
+                                
                                 <button type="button" class="btn btn-info" onclick="view_more()" style="display: block; width: 100%;">View Bottlenecks</button>
+                                
+                                 <button type="button" class="btn btn-info" onclick="saveChange()" style="display: block; width: 100%;">Save</button>
                             </div>      
                         </div>
                     </div>
