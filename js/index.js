@@ -35,8 +35,6 @@ function load(id) {
     default:
       console.log("got bad load id");
   } 
-
-  // reload firebase stuff regardless of id
 }
 
 // firebase stuff ------------------------------------------------------------------------------------
@@ -45,32 +43,12 @@ function load(id) {
 // creates listeners for rendering data, adding data, etc
 // automatically runs on page load
 // call again every time page is drawn (in function "load")
-loadFirebase('dash');  // load the dashboard for the first page load
 function loadFirebase(id){
   // only rerun the code for that page being loaded
   switch(id) {
     case "dash":
-      // bottleneck code here!
-      // load all relevant firebase refs, iterate through to detect "bottlenecks"
-      // if bottleneck is detected, show user in the appropriate widget
-
-      // INVENTORY BOTTLENECK CODE
-      var itemsRef = new Firebase('https://square1.firebaseio.com');
-      itemsRef.on("value", function(snapshot){
-        snapshot.forEach(function(data) {
-          k = data.val();
-          if (k.Sourcing.Inventory < 20){
-            document.getElementById("inventory-panel-body").innerHTML += makeInventoryAlert(k);
-          }
-        });
-      });
-      // do something
-      // modify widget
-
-      // SCHEDULE BOTTLENECK CODE
-      var scheduleRef = new Firebase('https://square1.firebaseio.com/scheudle');
-      // do something
-      // modify widget
+      // display bottlenecked stuff in widgets
+      bottleneckLogic();
       break;
     case "inventory":
       // -------------------------------------------------------------------------
@@ -113,6 +91,41 @@ function loadFirebase(id){
   } 
 };
 
+// run bottleneck logic here, called from loadfirebase() in the dash case of that switch
+function bottleneckLogic(){
+  // bottleneck code here!
+  // load all relevant firebase refs, iterate through to detect "bottlenecks"
+  // if bottleneck is detected, show user in the appropriate widget
+
+  // INVENTORY BOTTLENECK CODE
+  var itemsRef = new Firebase('https://square1.firebaseio.com');
+  itemsRef.once("value", function(snapshot){
+    snapshot.forEach(function(data) {
+      k = data.val();
+      if (k.Sourcing.Inventory < 20){
+        document.getElementById("inventory-panel-body").innerHTML += makeInventoryAlert(k);
+      }
+    });
+  });
+  // do something
+  // modify widget
+
+  // SCHEDULE BOTTLENECK CODE
+  var scheduleRef = new Firebase('https://square1.firebaseio.com/scheudle');
+  // do something
+  // modify widget
+
+
+
+  // bottleneck functions ----------------------
+  // function for generating inventory bottleneck notification html
+  function makeInventoryAlert(k){
+    s = "";
+    s += "\n<h5>" + String(k.Part) + " running low, only " + String(k.Sourcing.Inventory) + " left</h5>";
+    return s;
+  }
+}
+
 var show_text = false;
 function view_more() {
     document.getElementById("demo").style.color = "red";
@@ -127,8 +140,4 @@ function view_more() {
     }
 }
 
-function makeInventoryAlert(k){
-  s = "";
-  s += "\n<h5>" + String(k.Part) + " running low, only " + String(k.Sourcing.Inventory) + " left</h5>";
-  return s;
-}
+
