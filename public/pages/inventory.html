@@ -31,12 +31,8 @@
     <!-- Custom -->
     <link href="../css/index.css" rel="stylesheet" type="text/css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+
+
   
 </head>
 
@@ -83,14 +79,11 @@
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="../index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
                         <li>
-                            <a href="../pages/shipping.html"><i class="fa fa-bar-chart-o fa-fw"></i> Shipping Page</span></a>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Phases of Production</a>
                         </li>    
-                        <li>
-                            <a href="../pages/inventory.html"><i class="fa fa-cube fa-fw"></i> Inventory Page</span></a>
-                        </li>  
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -117,34 +110,70 @@
                                     <table class="table">
                                         <thead> 
                                             <tr>
-                                                <th> Order Number</th>
-                                                <th> Name </th>
-                                                <th> Location</th>
-                                                <th> Item</th>
-                                                <th> Weight</th>
-                                                <th> Deadline</th>
-                                                <th> Ship</th>
                                                 <th> Status</th>
+                                                <th> Part/Material</th>
+                                                <th> Inventory</th>
+                                                <th> Reorder Level</th>
+                                                <th> Cost/Unit</th>
+                                                <th> Location </th>
+                                                <th> Order Item</th>   
                                             </tr>
-                                        </thead>
 
+                                        </thead>
+                                           
                                         <tbody id = "dataTable"></tbody>
                                     </table>
                                 </div>
                             </div>      
                         </div>
-                    </div>  
                     </div>
+
                 </div>
+            <button id="add_item" class="btn btn-primary">Add Item to Inventory</button>
+
+            <br><br>
+            <form id = "new_inventory_entry" class ="form-inline inventory-form">
+                <div class="form-group">
+                    <input type ="text" class ="form-control" id ="part_input" placeholder="Part/Material">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="number" class ="form-control" id ="inventory_input" placeholder="Inventory">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="number" class ="form-control" id ="reorder_input" placeholder="Reorder Level">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="number" class ="form-control" id ="cost_input" placeholder="Cost/Unit">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="text" class ="form-control" id="location_input" placeholder="Location">
+                </div>
+                <div class="form-group">
+                    <input type ="text" class ="form-control" id="link_input" placeholder="Link">
+                </div>
+
+                <button type ="submit" class="btn btn-primary" onclick="addItem()">Add</button>
+                
+            
+            
+            
+            </form>
+            
+            
+            
             </div>
         </div>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
-    <script src="../js/jquery.min.js"></script>
+    <script src="js/jquery.min.js"></script>
     
     <!-- Bootstrap Core JavaScript -->
-    <script src="../js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
     <script src="js/metisMenu.min.js"></script>
@@ -155,12 +184,12 @@
     <!-- // <script src="js/morris-data.js"></script> -->
 
     <!-- Custom Theme JavaScript -->
-    <script src="../js/sb-admin-2.js"></script>
+    <script src="js/sb-admin-2.js"></script>
 
     <!-- firebase -->
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <!-- custom -->
-    <script src="../js/shipping.js"></script>
+    <script src="../js/inventory.js"></script>
 
 
 

@@ -1,16 +1,5 @@
 var myFirebaseRef = new Firebase('https://square1.firebaseio.com');
 
-// myFirebaseRef.set({
-//   alanisawesome: {
-//     date_of_birth: "June 23, 1912",
-//     full_name: "Alan Turing"
-//   },
-//   gracehop: {
-//     date_of_birth: "December 9, 1906",
-//     full_name: "Grace Hopper"
-//   }
-// });
-
 myFirebaseRef.set({
   "0" : {
   	Part: "Wood Panel", 
@@ -68,8 +57,6 @@ myFirebaseRef.set({
 });
 
 myFirebaseRef.on("value", function(snapshot) {
-  // alert(snapshot.val());  // Alerts "San Francisco"
-  // document.getElementById("demo").innerHTML = snapshot.val();
   var table = document.getElementById("dataTable");
   
 
@@ -118,26 +105,4 @@ function view_more() {
       document.getElementById("demo").innerHTML ="";
     }
         
-
-
-    // <p>Need three more chips</p>
-    // document.write("view more button clicked");
-    
 }
-
-//   function view_more() {
-//   alert("I am an alert box!");
-
-// }
-
-// Get a reference to our posts
-// var ref = new Firebase("https://docs-examples.firebaseio.com/web/saving-data/fireblog/posts");
-
-// Retrieve new posts as they are added to our database
-// myFirebaseRef.on("child_added", function(snapshot, prevChildKey) {
-//   var newPost = snapshot.val();
-//   console.log("Author: " + newPost.title);
-//   console.log("Title: " + newPost.author);
-//   console.log("Title: " + newPost.location);
-//   console.log("Previous Post ID: " + prevChildKey);
-// });
