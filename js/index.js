@@ -2,9 +2,7 @@
 
 // onload, load in the dashboard
 $( document ).ready(function() {
-  jQuery.get('pages/dash.html', function(data) {
-    document.getElementById("page-wrapper").innerHTML = data;
-  });
+  load("dash");
 });
 
 // loads pages by redrawing page-wrapper DOM
@@ -13,11 +11,26 @@ function load(id) {
     case "dash":
       jQuery.get('pages/dash.html', function(data) {
         document.getElementById("page-wrapper").innerHTML = data;
+        jQuery.get('pages/inventory-widget.html', function(data2) {
+          document.getElementById("inventory-panel").innerHTML = data2;
+          jQuery.get('pages/schedule-widget.html', function(data3) {
+            document.getElementById("schedule-panel").innerHTML = data3;
+            loadFirebase(id);
+          });
+        });
+      });
+      break;
+    case "inventory":
+      jQuery.get('pages/inventory.html', function(data) {
+        document.getElementById("page-wrapper").innerHTML = data;
         loadFirebase(id);
       });
       break;
-    case "pop":
-      document.getElementById("page-wrapper").innerHTML = "redrawing, id is: " + String(id);
+    case "schedule":
+      jQuery.get('pages/schedule.html', function(data) {
+        document.getElementById("page-wrapper").innerHTML = data;
+        loadFirebase(id);
+      });
       break;
     default:
       console.log("got bad load id");
@@ -37,6 +50,29 @@ function loadFirebase(id){
   // only rerun the code for that page being loaded
   switch(id) {
     case "dash":
+      // bottleneck code here!
+      // load all relevant firebase refs, iterate through to detect "bottlenecks"
+      // if bottleneck is detected, show user in the appropriate widget
+
+      // INVENTORY BOTTLENECK CODE
+      var itemsRef = new Firebase('https://square1.firebaseio.com');
+      itemsRef.on("value", function(snapshot){
+        snapshot.forEach(function(data) {
+          k = data.val();
+          if (k.Sourcing.Inventory < 20){
+            document.getElementById("inventory-panel-body").innerHTML += makeInventoryAlert(k);
+          }
+        });
+      });
+      // do something
+      // modify widget
+
+      // SCHEDULE BOTTLENECK CODE
+      var scheduleRef = new Firebase('https://square1.firebaseio.com/scheudle');
+      // do something
+      // modify widget
+      break;
+    case "inventory":
       // -------------------------------------------------------------------------
       // INVENTORY
       // -------------------------------------------------------------------------
@@ -66,7 +102,7 @@ function loadFirebase(id){
         });
       });
       break;
-    case "pop":
+    case "schedule":
       // -------------------------------------------------------------------------
       // SCHEDULE
       // -------------------------------------------------------------------------
@@ -89,4 +125,10 @@ function view_more() {
       show_text = false;
       document.getElementById("demo").innerHTML ="";
     }
+}
+
+function makeInventoryAlert(k){
+  s = "";
+  s += "\n<h5>" + String(k.Part) + " running low, only " + String(k.Sourcing.Inventory) + " left</h5>";
+  return s;
 }
