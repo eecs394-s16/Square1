@@ -34,7 +34,7 @@ function load(id) {
       break;
     default:
       console.log("got bad load id");
-  } 
+  }
 }
 
 // firebase stuff ------------------------------------------------------------------------------------
@@ -116,12 +116,27 @@ function bottleneckLogic(){
   // INVENTORY BOTTLENECK CODE
   var itemsRef = new Firebase('https://square1.firebaseio.com');
   itemsRef.once("value", function(snapshot){
+
+    s = '<div class= "table-responsive" style = "textAlign:left">' +
+          '<table class="table">' + 
+            '<thead>' +  
+              '<tr> ' +
+                '<th> Part/Material</th>' + 
+                '<th> Inventory</th> ' +
+              '</tr> ' +
+           '</thead>' + 
+           '<tbody>' ;
+
     snapshot.forEach(function(data) {
       k = data.val();
-      if (k.Sourcing.Inventory < 20){
-        document.getElementById("inventory-panel-body").innerHTML += makeInventoryAlert(k);
+      // table to show inventory alert data 
+      if (k.Sourcing && k.Sourcing.Inventory && k.Sourcing.Inventory < 20){
+         makeInventoryAlert(k);
       }
     });
+
+    s += '</tbody> </table> </div>';
+    document.getElementById("inventory-panel-body").innerHTML = s;
   });
   // do something
   // modify widget
@@ -131,13 +146,11 @@ function bottleneckLogic(){
   // do something
   // modify widget
 
-
-
   // bottleneck functions ----------------------
   // function for generating inventory bottleneck notification html
   function makeInventoryAlert(k){
-    s = "";
-    s += "\n<h5>" + String(k.Part) + " running low, only " + String(k.Sourcing.Inventory) + " left</h5>";
-    return s;
+    s += "<tr> <td> <b>" + String(k.Part) + " </b> </td>" 
+    s +=  "<td> <b> <span style='color : red'>" + String(k.Sourcing.Inventory) + "</span> </b> </td> <tr>";
+    // return s;
   }
 }
