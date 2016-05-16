@@ -35,16 +35,14 @@ myFirebaseRef.on("value", function(snapshot) {
 	var cell8 = row.insertCell(7);
 	var cell9 = row.insertCell(8);
 	var cell10 = row.insertCell(9);
-	cell1.innerHTML = newItem.Name;
-	cell2.innerHTML = newItem.location.Address;
-	cell3.innerHTML = newItem.product.items;
-	cell4.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>'
-	  // cell4.innerHTML = '<button onclick='+newItem.Sourcing.Link+'>Order Item</button>'
-
-		// cell4.innerHTML = newItem.Sourcing.Link;
-		// cell4.innerHTML = newItem.
-	 //    console.log("The " + data.key() + " dinosaur's score is " + data.val());
-	 //    document.getElementById("demo").innerHTML = data.val();
+	cell1.innerHTML = newItem.Order;
+	cell2.innerHTML = newItem.Name;
+	cell3.innerHTML = newItem.location.Address;
+	cell4.innerHTML = newItem.product.items;
+	cell5.innerHTML =  newItem.product.weight;
+	cell6.innerHTML =  newItem.deadline;
+	cell7.innerHTML =  newItem.ship;
+	//cell8.innerHTML =  newItem.ship;
 
   });
 
