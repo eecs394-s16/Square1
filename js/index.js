@@ -89,6 +89,22 @@ function loadFirebase(id){
     default:
       console.log("got bad load id");
   } 
+
+
+  // functions -------------------------------------------------------
+  var show_text = false;
+  function view_more() {
+    document.getElementById("demo").style.color = "red";
+    if (show_text ==false){
+      // document.write("\n")
+      document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer to restock inventory to fulfill order!";
+      show_text = true
+    }
+    else {
+      show_text = false;
+      document.getElementById("demo").innerHTML ="";
+    }
+  }
 };
 
 // run bottleneck logic here, called from loadfirebase() in the dash case of that switch
@@ -125,19 +141,3 @@ function bottleneckLogic(){
     return s;
   }
 }
-
-var show_text = false;
-function view_more() {
-    document.getElementById("demo").style.color = "red";
-    if (show_text ==false){
-      // document.write("\n")
-      document.getElementById("demo").innerHTML = "Order 3 Control Switch Panels and 1 Transducer to restock inventory to fulfill order!";
-      show_text = true
-    }
-    else {
-      show_text = false;
-      document.getElementById("demo").innerHTML ="";
-    }
-}
-
-
