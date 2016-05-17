@@ -112,17 +112,17 @@ inventory.on("value", function(snapshot) {
 
     var addFirebase = document.getElementById("add_to_firebase");
     addFirebase.onclick = function(){
-    inventory.push({
-        Part:document.getElementById("part_input").value,
-        Sourcing: {
-            Cost:document.getElementById("cost_input").value,
-            Inventory:document.getElementById("inventory_input").value,
-            ReorderLevel:document.getElementById("reorder_input").value,
-            Location:document.getElementById("location_input").value,
-            Link:"https://www.google.com"
-        }
+        inventory.push({
+            Part:document.getElementById("part_input").value,
+            Sourcing: {
+                Cost:document.getElementById("cost_input").value,
+                Inventory:document.getElementById("inventory_input").value,
+                ReorderLevel:document.getElementById("reorder_input").value,
+                Location:document.getElementById("location_input").value,
+                Link:document.getElementById("link_input").value
+            }
 
-    })
+        })
 }
 
 
