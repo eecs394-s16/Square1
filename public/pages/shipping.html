@@ -109,7 +109,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <b>
-                                    Inventory Details
+                                    Shipping Details
                                 </b>
                             </div> 
                             <div class="panel-body">       
@@ -136,7 +136,41 @@
                     </div>  
                     </div>
                 </div>
+                <button id="add_item" class="btn btn-primary">Add Item to Inventory</button>
+                    <br><br>
+            <form id = "new_inventory_entry" class ="form-inline inventory-form">
+                <div class="form-group">
+                    <input type ="text" class ="form-control" id ="part_input" placeholder="Order Number">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="number" class ="form-control" id ="inventory_input" placeholder="Name">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="number" class ="form-control" id ="reorder_input" placeholder="Location">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="number" class ="form-control" id ="cost_input" placeholder="Item">
+                </div>
+                
+                <div class="form-group">
+                    <input type ="text" class ="form-control" id="location_input" placeholder="Weight">
+                </div>
+                <div class="form-group">
+                    <input type ="text" class ="form-control" id="link_input" placeholder="Deadline">
+                </div>
+
+                <button type ="submit" class="btn btn-primary" onclick="addItem()">Add</button>
+                
+            
+            
+            
+            </form>
+
             </div>
+
         </div>
     <!-- /#wrapper -->
 
