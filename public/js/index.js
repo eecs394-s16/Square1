@@ -51,35 +51,74 @@ function loadFirebase(id){
       bottleneckLogic();
       break;
     case "inventory":
-      // -------------------------------------------------------------------------
-      // INVENTORY
-      // -------------------------------------------------------------------------
-      var itemsRef = new Firebase('https://square1.firebaseio.com');
-      itemsRef.once("value", function(snapshot) {
-        // alert(snapshot.val());  // Alerts "San Francisco"
-        // document.getElementById("demo").innerHTML = snapshot.val();
-        var table = document.getElementById("itemsTable");
-        snapshot.forEach(function(data) {
-          
-          var newItem = data.val();
-          var row = table.insertRow(0);
-          // table.setAttribute("align","center");
-          var cell1 = row.insertCell(0);
-          var cell2 = row.insertCell(1);
-          var cell3 = row.insertCell(2);
-          var cell4 = row.insertCell(3);
-          var cell5 = row.insertCell(4);
-          var cell6 = row.insertCell(5);
-          var cell7 = row.insertCell(6);
-          var cell8 = row.insertCell(7);
-          var cell9 = row.insertCell(8);
-          var cell10 = row.insertCell(9);
-          cell1.innerHTML = newItem.Part;
-          cell2.innerHTML = newItem.Sourcing.Cost;
-          cell3.innerHTML = newItem.Sourcing.Inventory;
-          cell4.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>'
-        });
-      });
+ var inventory = new Firebase('https://395s16-test.firebaseio.com/inventory');
+
+var bottleneck =false
+var status = "foo green"
+document.getElementById("new_inventory_entry").style.visibility='hidden';
+    
+inventory.on("value", function(snapshot) {
+    var table = document.getElementById("dataTable");
+    snapshot.forEach(function(data) {
+        var newItem = data.val();
+        var row = table.insertRow(0);
+        var remainingInventory = newItem.Sourcing.Inventory;
+        var reorder_level = newItem.Sourcing.ReorderLevel;
+        var reorder_threshold = reorder_level*0.1
+        
+        if (remainingInventory == 0) {
+            row.insertCell(0).innerHTML = '<div class ="foo wine"></div>'
+        }
+        else if (remainingInventory > reorder_level){
+            row.insertCell(0).innerHTML = '<div class ="foo green"></div>'
+        }
+        else if (remainingInventory <= 5 || remainingInventory <= reorder_threshold){
+            row.insertCell(0).innerHTML = '<div class ="foo yellow"></div>'
+            
+        }
+        else {
+            row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
+//            document.getElementById("color").className = "foo green";
+        }
+                
+        
+        row.insertCell(1).innerHTML = newItem.Part;
+        row.insertCell(2).innerHTML=newItem.Sourcing.Inventory;
+        row.insertCell(3).innerHTML=newItem.Sourcing.ReorderLevel;
+        row.insertCell(4).innerHTML=newItem.Sourcing.Cost;
+        row.insertCell(5).innerHTML=newItem.Sourcing.Location;
+        row.insertCell(6).innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>'
+
+    })
+    
+    var buttonID = document.getElementById("add_item");
+    buttonID.onclick = function(){
+        document.getElementById("new_inventory_entry").style.visibility='visible';
+    }
+
+
+    var addFirebase = document.getElementById("add_to_firebase");
+    addFirebase.onclick = function(){
+        inventory.push({
+            Part:document.getElementById("part_input").value,
+            Sourcing: {
+                Cost:document.getElementById("cost_input").value,
+                Inventory:document.getElementById("inventory_input").value,
+                ReorderLevel:document.getElementById("reorder_input").value,
+                Location:document.getElementById("location_input").value,
+                Link:document.getElementById("link_input").value
+            }
+
+        })
+}
+
+
+    
+    
+})
+
+
+
       break;
     case "schedule":
       // -------------------------------------------------------------------------
@@ -87,6 +126,60 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       var scheduleRef = new Firebase('https://square1.firebaseio.com/scheudle');
       break;
+
+    case "shipping":
+    var myFirebaseRef = new Firebase('https://square1.firebaseio.com/orders');
+
+myFirebaseRef.set({
+  "2304" : {
+    Order: "2304",
+      Name: "John Doe",
+      location: { 
+        Address: "1234 Apple rd",
+        City: "Evanston",
+        State: "Il",
+        zip: 60201
+      },
+      product: {
+        items:"duo speaker",
+        weight: "3.3 lbs"
+      },   
+      deadline: 120416,
+      ship: "ship"
+  }
+});
+
+myFirebaseRef.on("value", function(snapshot) {
+  var table = document.getElementById("dataTable");
+  snapshot.forEach(function(data) {
+  var newItem = data.val();
+  var row = table.insertRow(0);
+  // table.setAttribute("align","center");
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  var cell3 = row.insertCell(2);
+  var cell4 = row.insertCell(3);
+  var cell5 = row.insertCell(4);
+  var cell6 = row.insertCell(5);
+  var cell7 = row.insertCell(6);
+  var cell8 = row.insertCell(7);
+  var cell9 = row.insertCell(8);
+  var cell10 = row.insertCell(9);
+  cell1.innerHTML = newItem.Order;
+  cell2.innerHTML = newItem.Name;
+  cell3.innerHTML = newItem.location.Address;
+  cell4.innerHTML = newItem.product.items;
+  cell5.innerHTML =  newItem.product.weight;
+  cell6.innerHTML =  newItem.deadline;
+  cell7.innerHTML =  newItem.ship;
+  //cell8.innerHTML =  newItem.ship;
+
+  });
+
+
+});
+break;
+    
     default:
       console.log("got bad load id");
   } 
@@ -94,6 +187,8 @@ function loadFirebase(id){
 
   // functions -------------------------------------------------------
   var show_text = false;
+
+
   function view_more() {
     document.getElementById("demo").style.color = "red";
     if (show_text ==false){
