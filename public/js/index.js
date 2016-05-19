@@ -28,6 +28,10 @@ function load(id) {
         loadFirebase(id);
       });
       break;
+    case "shipping":
+      $('#page-wrapper').load('pages/shipping.html');
+       loadFirebase(id);
+        break;
     default:
       console.log("got bad load id");
   }
