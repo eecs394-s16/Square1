@@ -1,5 +1,5 @@
 var myFirebaseRef = new Firebase('https://square1.firebaseio.com/orders');
-
+document.getElementById("new_shipping_entry").style.visibility='hidden';
 myFirebaseRef.set({
 	"2304" : {
 		Order: "2304",
@@ -19,6 +19,10 @@ myFirebaseRef.set({
   }
 });
 
+    var buttonID2 = document.getElementById("add_item2");
+    buttonID2.onclick = function(){
+        document.getElementById("new_shipping_entry").style.visibility='visible';
+    }
 myFirebaseRef.on("value", function(snapshot) {
 	var table = document.getElementById("dataTable");
 	snapshot.forEach(function(data) {
