@@ -11,7 +11,7 @@ function load(id) {
     case "dash":
       $("#page-wrapper").load('pages/dash.html', function(data) {
         $('#inventory-panel').load('pages/inventory-widget.html', function(){
-          $('#schedule-panel').load('pages/schedule-widget.html', function(){
+          $('#orders-panel').load('pages/orders-widget.html', function(){
             loadFirebase(id);
           });
         });
@@ -22,8 +22,8 @@ function load(id) {
         loadFirebase(id);
       });
       break;
-    case "schedule":
-      jQuery.get('pages/schedule.html', function(data) {
+    case "orders":
+      jQuery.get('pages/orders.html', function(data) {
         document.getElementById("page-wrapper").innerHTML = data;
         loadFirebase(id);
       });
@@ -54,8 +54,8 @@ function loadFirebase(id){
     case "inventory":
       var inventoryRef = new Firebase('https://square1.firebaseio.com/inventory');
 
-      var bottleneck =false
-      var status = "foo green"
+      var bottleneck =false;
+      var status = "foo green";
 
       inventoryRef.on("value", function(snapshot) {
         var table = document.getElementById("dataTable");
@@ -108,17 +108,98 @@ function loadFirebase(id){
         })
       }
       break;
-    case "schedule":
+    case "orders":
       // -------------------------------------------------------------------------
-      // SCHEDULE
+      // orders
       // -------------------------------------------------------------------------
-      var scheduleRef = new Firebase('https://square1.firebaseio.com/schedule');
+      var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
+
+      var bottleneck =false;
+      var status = "foo green";
+
+      ordersRef.once("value", function(snapshot) {
+        var table = document.getElementById("dataTable");
+        snapshot.forEach(function(data) {
+          var newItem = data.val();
+          var row = table.insertRow(0);
+          // var remaining_orders = newItem.Sourcing.Quantity;
+          // var reorder_level = newItem.Sourcing.ReorderLevel;
+          // var reorder_threshold = reorder_level*0.1
+
+          // if (remaining_orders == 0) {
+          //   row.insertCell(0).innerHTML = '<div class ="foo wine"></div>'
+          // }
+          // else if (remaining_orders > reorder_level){
+          //   row.insertCell(0).innerHTML = '<div class ="foo green"></div>'
+          // }
+          // else if (remaining_orders <= 5 || remaining_orders <= reorder_threshold){
+          //   row.insertCell(0).innerHTML = '<div class ="foo yellow"></div>'
+          // }
+          // else {
+          //   row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
+          // }
+          row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
+          row.insertCell(1).innerHTML = newItem.order_num;
+          row.insertCell(2).innerHTML = newItem.name;
+          row.insertCell(3).innerHTML = newItem.address;
+          row.insertCell(4).innerHTML = newItem.items;
+          row.insertCell(5).innerHTML = String(newItem.deadline);
+          row.insertCell(6).innerHTML = getTimeLeft(newItem.deadline);
+          row.insertCell(7).innerHTML = "<button type =\"button\" class=\"btn btn-success\" onclick=\"function(){alert('viewing details');}\">View</button>";
+        })
+      })
+
+      document.getElementById("new_orders_entry").style.display='none';
+      var buttonID = document.getElementById("add_item");
+      var ifAddEntryBool = false;
+      buttonID.onclick = toggleAddEntryButton;
+
+      var addFirebase = document.getElementById("add_to_firebase");
+      addFirebase.onclick = function(){
+        ordersRef.push({
+          "order_num":    document.getElementById("order_num_input").value,
+          "name":         document.getElementById("name_input").value,
+          "address":      document.getElementById("address_input").value,
+          "items":        document.getElementById("items_input").value,
+          "deadline":     document.getElementById("deadline_input").value,
+        });
+        toggleAddEntryButton();
+        clearFormInputs();
+      }
+
+      // functions ----------------------------------------------------------------
+
+      function toggleAddEntryButton(){
+        if (ifAddEntryBool){
+          document.getElementById("new_orders_entry").style.display='none';
+          document.getElementById("add_item").innerHTML = "Add Item to Inventory";
+          ifAddEntryBool = false; 
+        }
+        else {
+          document.getElementById("new_orders_entry").style.display='block';
+          document.getElementById("add_item").innerHTML = "Cancel";
+          ifAddEntryBool = true;
+        }
+      }
+
+      function clearFormInputs(){
+        document.getElementById("order_num_input").value = "";
+        document.getElementById("name_input").value = "";
+        document.getElementById("address_input").value = "";
+        document.getElementById("items_input").value = "";
+        document.getElementById("deadline_input").value = "";
+      }
+
+      function getTimeLeft(deadline){
+        return "todo";
+      }
+
       break;
     case "shipping":
       // -------------------------------------------------------------------------
       // SHIPPING
       // -------------------------------------------------------------------------
-      var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
+      var ordersRef = new Firebase('https://square1.firebaseio.com/shipping');
 
       ordersRef.set({
         "2304" : {
@@ -205,8 +286,8 @@ function bottleneckLogic(){
     document.getElementById("inventory-panel-body").innerHTML = s;
   });
 
-  // SCHEDULE BOTTLENECK CODE  --------------------------------------------------- 
-  var scheduleRef = new Firebase('https://square1.firebaseio.com/schedule');
+  // orders BOTTLENECK CODE  --------------------------------------------------- 
+  var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
   // do something
   // modify widget
 
