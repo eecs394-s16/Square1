@@ -20,6 +20,7 @@ function load(id) {
     case "inventory":
       $('#page-wrapper').load('pages/inventory.html', function(data){
         loadFirebase(id);
+
       });
       break;
     case "orders":
@@ -28,6 +29,7 @@ function load(id) {
         loadFirebase(id);
       });
       break;
+
     case "shipping":
       $('#page-wrapper').load('pages/shipping.html');
       loadFirebase(id);
@@ -35,6 +37,8 @@ function load(id) {
     default:
       console.log("got bad load id");
   }
+
+
 }
 
 // firebase stuff ------------------------------------------------------------------------------------
@@ -108,6 +112,7 @@ function loadFirebase(id){
         })
       }
       break;
+
     case "orders":
       // -------------------------------------------------------------------------
       // orders
@@ -122,31 +127,87 @@ function loadFirebase(id){
         snapshot.forEach(function(data) {
           var newItem = data.val();
           var row = table.insertRow(0);
-          // var remaining_orders = newItem.Sourcing.Quantity;
-          // var reorder_level = newItem.Sourcing.ReorderLevel;
-          // var reorder_threshold = reorder_level*0.1
+          var colIndex = 0;
 
-          // if (remaining_orders == 0) {
-          //   row.insertCell(0).innerHTML = '<div class ="foo wine"></div>'
-          // }
-          // else if (remaining_orders > reorder_level){
-          //   row.insertCell(0).innerHTML = '<div class ="foo green"></div>'
-          // }
-          // else if (remaining_orders <= 5 || remaining_orders <= reorder_threshold){
-          //   row.insertCell(0).innerHTML = '<div class ="foo yellow"></div>'
-          // }
-          // else {
-          //   row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
-          // }
-          row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
-          row.insertCell(1).innerHTML = newItem.order_num;
-          row.insertCell(2).innerHTML = newItem.name;
-          row.insertCell(3).innerHTML = newItem.address;
-          row.insertCell(4).innerHTML = newItem.items;
-          row.insertCell(5).innerHTML = String(newItem.deadline);
-          row.insertCell(6).innerHTML = getTimeLeft(newItem.deadline);
-          row.insertCell(7).innerHTML = "<button type =\"button\" class=\"btn btn-success\" onclick=\"function(){alert('viewing details');}\">View</button>";
-        })
+          // first create the status column with defult color circle 
+          var col_status = row.insertCell(colIndex++);
+          col_status.innerHTML = '<div class ="foo orange"></div>'
+          col_status.setAttribute("class", "firstcol")
+          // insert following data 
+          row.insertCell(colIndex++).innerHTML = newItem.order_num;
+          row.insertCell(colIndex++).innerHTML = newItem.name;
+          row.insertCell(colIndex++).innerHTML = newItem.address;
+          row.insertCell(colIndex++).innerHTML = newItem.items;
+          row.insertCell(colIndex++).innerHTML = newItem.deadline;
+
+          // calculate the days left 
+          var sortColindex = colIndex;
+          var col_dayLeft = row.insertCell(colIndex++);
+          col_dayLeft.setAttribute("style", "font-weight:bold");
+          var daysLeft = getTimeLeft(newItem.deadline);
+          col_dayLeft.innerHTML = daysLeft + " Days";
+
+          // insert view button
+          row.insertCell(colIndex++).innerHTML = "<button type =\"button\" class=\"btn btn-success\" onclick=\"function(){alert('viewing details');}\">View</button>";
+
+          // according to daysleft to change the color of the circle in status columns
+          // but without completion check 
+          if (daysLeft == 0 ) {
+            col_status.innerHTML = '<div id = "redFilledCircle"></div>';
+
+            // to do check whether complete or not ------------------------
+          }
+          else if (daysLeft <= 7){
+            col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
+          }
+          else if (daysLeft > 7){
+            col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
+          }
+          else {
+            col_status.innerHTML = '<div class ="foo orange"></div>';
+          }
+          // 
+        });
+
+        // add parser through the tablesorter addParser method 
+        $.tablesorter.addParser({ 
+            // set a unique id 
+            id: 'dayLeftNum', 
+            is: function(s) { 
+                // return false so this parser is not auto detected 
+                return false; 
+            }, 
+            format: function(s) { 
+                // format your data for normalization 
+                return parseInt(s.toLowerCase().replace(/days/,"")); 
+            }, 
+            // set type, either numeric or text 
+            type: 'numeric' 
+        }); 
+        // sorting table according to daysleft----------------------------
+        $("#testTable").tablesorter({
+            // defualt sort is on column 5 deadline
+            sortList: [[5,0]],
+
+            // pass the headers argument and assing a object 
+            headers: { 
+                // assign the secound column (we start counting zero) 
+                0: { 
+                    // disable it by setting the property sorter to false 
+                    sorter: false 
+                }, 
+                6: {
+                    sorter: 'dayLeftNum'
+                },
+                // assign the third column (we start counting zero) 
+                7: { 
+                    // disable it by setting the property sorter to false 
+                    sorter: false 
+                }
+            } 
+
+
+          });
       })
 
       document.getElementById("new_orders_entry").style.display='none';
@@ -191,7 +252,17 @@ function loadFirebase(id){
       }
 
       function getTimeLeft(deadline){
-        return "todo";
+        var dateObj = new Date(deadline);  // convert string to date object 
+
+        var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+        var firstDate = dateObj;
+        var secondDate = new Date();
+
+        var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
+        if (diffDays <= 0)
+          diffDays = 0;
+
+        return diffDays;
       }
 
       break;

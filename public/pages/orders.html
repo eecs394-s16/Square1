@@ -3,9 +3,9 @@
         <h1 class="page-header">Orders</h1>
            <div class="panel-body">       
             <div class= "table-responsive">
-                <table class="table">
+                <table id = "testTable" class="table tablesorter">
                     <thead> 
-                        <tr sytle="background-color: grey">
+                        <tr>
                             <th> Status</th>
                             <th> Order#</th>
                             <th> Name</th>
@@ -29,10 +29,11 @@
                     <input type ="date" class ="form-control"       id ="deadline_input" placeholder="Deadline">
                     <button type ="button" class="btn btn-success"  id="add_to_firebase">Add</button>
                 </form>
+
                 <div>
                     <button id="add_item" class="btn btn-outline btn-info btn-block">Add Item to Inventory</button>
-                </div>
-            </div>
-        </div>  
-    </div>
-</div>
+                </div> <!-- button of add item-->
+            </div> <!-- table responsive-->
+        </div>  <!-- panel body-->
+    </div> <!-- col-12-->
+</div> <!-- row -->
