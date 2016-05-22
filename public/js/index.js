@@ -121,7 +121,7 @@ function loadFirebase(id){
       // var bottleneck =false;
       // var status = "foo green";
  
-        ordersRef.once("value", function(snapshot) {
+      ordersRef.once("value", function(snapshot) {
         var table = document.getElementById("ordersTable-body");
 
         snapshot.forEach(function(data) {
@@ -150,7 +150,7 @@ function loadFirebase(id){
 
           // insert view button
           row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
-          'id="viewMore_btn" data-toggle="collapse" data-target="#demo"}>View</button>';
+          'class="viewMore_btn" data-toggle="collapse" data-target="#demo"}>View</button>';
 
           // according to daysleft to change the color of the circle in status columns
           // but without completion check 
@@ -171,7 +171,7 @@ function loadFirebase(id){
           // 
         }); // FOR EACH
 
-        var oTable = $('#ordersTable').dataTable({
+        var oTable = $('#ordersTable').DataTable({
             "lengthMenu": [[2, 4, 6, -1], [2, 4, 6, "All"]],
             "order": [[6, 'asc']],
             "columnDefs": [
@@ -185,10 +185,31 @@ function loadFirebase(id){
             "pagingType": "full_numbers"
         });  // dataTable config   
         // resize headers when window is resized 
-        $(window).bind('resize', function(){
-            oTable.fnAdjustColumnSizing();
-        });
+        // $(window).bind('resize', function(){
+        //     oTable.fnAdjustColumnSizing();
+        // });
+        // show more details--------------------------------------------------------
+        function details(d){
+          return '<h4> Need more details for ' + d[2] + ' ! </h4>';
+        }
 
+
+        // Add event listener for opening and closing details
+          $('#ordersTable-body').on('click', 'td .btn', function () {
+              var tr = $(this).closest('tr');
+              var row = oTable.row(tr);
+       
+              if ( row.child.isShown() ) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+              }
+              else {
+                  // Open this row
+                  row.child(details(row.data())).show();
+                  tr.addClass('shown');
+              }
+          } );
 
         });  // orderRef.once  
       
@@ -208,12 +229,13 @@ function loadFirebase(id){
           "items":        document.getElementById("items_input").value,
           "deadline":     document.getElementById("deadline_input").value,
         });
-      
+        // showNewItem();;
         toggleAddEntryButton();
         clearFormInputs();
-      }
-
-      // functions ----------------------------------------------------------------
+        // $('#page-wrapper').load('pages/orders.html');
+        load("orders");
+      } // addFirebase
+      //----------------------------function -------------------------------
 
       function toggleAddEntryButton(){
         if (ifAddEntryBool){
