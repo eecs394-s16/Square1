@@ -112,18 +112,18 @@ function loadFirebase(id){
         })
       }
       break;
-
     case "orders":
       // -------------------------------------------------------------------------
       // orders
       // -------------------------------------------------------------------------
       var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
 
-      var bottleneck =false;
-      var status = "foo green";
+      // var bottleneck =false;
+      // var status = "foo green";
+ 
+        ordersRef.once("value", function(snapshot) {
+        var table = document.getElementById("ordersTable-body");
 
-      ordersRef.once("value", function(snapshot) {
-        var table = document.getElementById("dataTable");
         snapshot.forEach(function(data) {
           var newItem = data.val();
           var row = table.insertRow(0);
@@ -145,10 +145,12 @@ function loadFirebase(id){
           var col_dayLeft = row.insertCell(colIndex++);
           col_dayLeft.setAttribute("style", "font-weight:bold");
           var daysLeft = getTimeLeft(newItem.deadline);
-          col_dayLeft.innerHTML = daysLeft + " Days";
+          col_dayLeft.innerHTML = daysLeft;
+
 
           // insert view button
-          row.insertCell(colIndex++).innerHTML = "<button type =\"button\" class=\"btn btn-success\" onclick=\"function(){alert('viewing details');}\">View</button>";
+          row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
+          'id="viewMore_btn" data-toggle="collapse" data-target="#demo"}>View</button>';
 
           // according to daysleft to change the color of the circle in status columns
           // but without completion check 
@@ -167,49 +169,31 @@ function loadFirebase(id){
             col_status.innerHTML = '<div class ="foo orange"></div>';
           }
           // 
+        }); // FOR EACH
+
+        var oTable = $('#ordersTable').dataTable({
+            "lengthMenu": [[2, 4, 6, -1], [2, 4, 6, "All"]],
+            "order": [[6, 'asc']],
+            "columnDefs": [
+              {"targets": [0,7], "orderable": false}
+              // { "width": "10px", "targets": [0,1,2,3,4,5,7]},
+              // { "width": "20px", "targets": [6]}
+              ],
+              // "autoWidth": true,
+            "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
+                    '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
+            "pagingType": "full_numbers"
+        });  // dataTable config   
+        // resize headers when window is resized 
+        $(window).bind('resize', function(){
+            oTable.fnAdjustColumnSizing();
         });
 
-        // add parser through the tablesorter addParser method 
-        $.tablesorter.addParser({ 
-            // set a unique id 
-            id: 'dayLeftNum', 
-            is: function(s) { 
-                // return false so this parser is not auto detected 
-                return false; 
-            }, 
-            format: function(s) { 
-                // format your data for normalization 
-                return parseInt(s.toLowerCase().replace(/days/,"")); 
-            }, 
-            // set type, either numeric or text 
-            type: 'numeric' 
-        }); 
-        // sorting table according to daysleft----------------------------
-        $("#testTable").tablesorter({
-            // defualt sort is on column 5 deadline
-            sortList: [[5,0]],
 
-            // pass the headers argument and assing a object 
-            headers: { 
-                // assign the secound column (we start counting zero) 
-                0: { 
-                    // disable it by setting the property sorter to false 
-                    sorter: false 
-                }, 
-                6: {
-                    sorter: 'dayLeftNum'
-                },
-                // assign the third column (we start counting zero) 
-                7: { 
-                    // disable it by setting the property sorter to false 
-                    sorter: false 
-                }
-            } 
+        });  // orderRef.once  
+      
 
-
-          });
-      })
-
+      // add item functionality -----------------------------------------
       document.getElementById("new_orders_entry").style.display='none';
       var buttonID = document.getElementById("add_item");
       var ifAddEntryBool = false;
@@ -224,6 +208,7 @@ function loadFirebase(id){
           "items":        document.getElementById("items_input").value,
           "deadline":     document.getElementById("deadline_input").value,
         });
+      
         toggleAddEntryButton();
         clearFormInputs();
       }
@@ -292,7 +277,7 @@ function loadFirebase(id){
       });
 
       ordersRef.on("value", function(snapshot) {
-        var table = document.getElementById("dataTable");
+        var table = document.getElementById("ordersTable-body");
         snapshot.forEach(function(data) {
           var newItem = data.val();
           var row = table.insertRow(0);

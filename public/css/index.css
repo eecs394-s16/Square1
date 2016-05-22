@@ -63,3 +63,10 @@
 table thead {
    background-color: #e6e6e6;
 }
+
+.paging_full_numbers .ui-button {
+padding: 2px 6px;
+margin: 0;
+cursor: pointer;
+* cursor: hand;
+}

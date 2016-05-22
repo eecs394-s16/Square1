@@ -1,25 +1,27 @@
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">Orders</h1>
-           <div class="panel-body">       
-            <div class= "table-responsive">
-                <table id = "testTable" class="table tablesorter">
+           <div class="panel-body">
+             <div >
+                <table id = "ordersTable" class="table dataTable" style="width:100%">
                     <thead> 
                         <tr>
                             <th> Status</th>
-                            <th> Order#</th>
-                            <th> Name</th>
-                            <th> Address</th>
-                            <th> Items</th>
-                            <th> Deadline </th>
-                            <th> Time Left</th>   
+                            <th> Order#    </div></th>
+                            <th> Name      </div></th>
+                            <th> Address   </div></th>
+                            <th> Items     </div></th>
+                            <th> Deadline  </div></th>
+                            <th> Time Left (Days) </div></th>   
                             <th> View Details</th> 
                         </tr>
                     </thead>
 
-                    <tbody id = "dataTable">
+                    <tbody id = "ordersTable-body">
                     </tbody>
                 </table>
+
+                <!-- <p id = "demo">SHOULD HAVE MORE DETIALS HERE!</p> -->
 
                 <form id = "new_orders_entry" class ="form-inline inventory-form">
                     <input type ="number" class ="form-control"     id ="order_num_input" placeholder="Order Number">
@@ -29,11 +31,11 @@
                     <input type ="date" class ="form-control"       id ="deadline_input" placeholder="Deadline">
                     <button type ="button" class="btn btn-success"  id="add_to_firebase">Add</button>
                 </form>
-
+                
                 <div>
                     <button id="add_item" class="btn btn-outline btn-info btn-block">Add Item to Inventory</button>
                 </div> <!-- button of add item-->
-            </div> <!-- table responsive-->
-        </div>  <!-- panel body-->
+             </div> <!-- table responsive-->
+           </div>  <!-- panel body-->
     </div> <!-- col-12-->
 </div> <!-- row -->
