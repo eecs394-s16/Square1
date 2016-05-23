@@ -193,12 +193,20 @@ function loadFirebase(id){
           "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
                   '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
           "pagingType": "full_numbers",
-        });  // dataTable config   
+          "bAutoWidth" : false,
+          "scrollX": true,
+          "scrollY": true,
+          "initComplete" : function () {
+            $('.dataTables_scrollBody thead tr').addClass('hidden');
+          },
+          // "aoColumnDefs": [
+          //   { "sWidth": "10%", "aTargets": [ -1 ] }
+          // ]
+        });  // dataTable config  
 
         // driver for editing datatable
         var changeDataHashTable = [];
         var editableArray = document.querySelector('#ordersTable');
-        editableArray.addEventListener('')
         editableArray.addEventListener('keydown', function(e){
           if (e.code=="Enter"){
             // enter key is pressed, send data
@@ -238,12 +246,12 @@ function loadFirebase(id){
               // can't move down
               e.target.blur();
             }
-          }
-        }, false);
+          }  // if (enter)
+        }, false);  // keydown eventlistener
 
         // editable stuff
         // when a cell loses focus, edit it/send to firebase
-        $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
+        // $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
 
         // show more details--------------------------------------------------------
         function details(d){
