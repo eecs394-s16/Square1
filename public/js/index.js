@@ -2,7 +2,8 @@
 
 // onload, load in the dashboard
 $( document ).ready(function() {
-  load("dash");
+  load("orders");
+  // load("dash");
 });
 
 // loads pages by redrawing page-wrapper DOM
@@ -117,10 +118,6 @@ function loadFirebase(id){
       // orders
       // -------------------------------------------------------------------------
       var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
-
-      // var bottleneck =false;
-      // var status = "foo green";
- 
       ordersRef.once("value", function(snapshot) {
         var table = document.getElementById("ordersTable-body");
 
@@ -133,12 +130,23 @@ function loadFirebase(id){
           var col_status = row.insertCell(colIndex++);
           col_status.innerHTML = '<div class ="foo orange"></div>'
           col_status.setAttribute("class", "firstcol")
+
           // insert following data 
-          row.insertCell(colIndex++).innerHTML = newItem.order_num;
-          row.insertCell(colIndex++).innerHTML = newItem.name;
-          row.insertCell(colIndex++).innerHTML = newItem.address;
-          row.insertCell(colIndex++).innerHTML = newItem.items;
-          row.insertCell(colIndex++).innerHTML = newItem.deadline;
+          var col_order_num = row.insertCell(colIndex++);
+          col_order_num.innerHTML = newItem.order_num;
+          col_order_num.setAttribute("contenteditable", true);
+          var col_name = row.insertCell(colIndex++);
+          col_name.innerHTML = newItem.name;
+          col_name.setAttribute("contenteditable", true);
+          var col_address = row.insertCell(colIndex++);
+          col_address.innerHTML = newItem.address;
+          col_address.setAttribute("contenteditable", true);
+          var col_items = row.insertCell(colIndex++);
+          col_items.innerHTML = newItem.items;
+          col_items.setAttribute("contenteditable", true);
+          var col_deadline = row.insertCell(colIndex++);
+          col_deadline.innerHTML = newItem.deadline;
+          col_deadline.setAttribute("contenteditable", true);
 
           // calculate the days left 
           var sortColindex = colIndex;
@@ -151,6 +159,11 @@ function loadFirebase(id){
           // insert view button
           row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
           'class="viewMore_btn" data-toggle="collapse" data-target="#demo"}>View</button>';
+
+          // hidden key
+          var hidden_key = row.insertCell(colIndex++);
+          hidden_key.innerHTML = data.key();
+          hidden_key.style.display='none';
 
           // according to daysleft to change the color of the circle in status columns
           // but without completion check 
@@ -172,46 +185,88 @@ function loadFirebase(id){
         }); // FOR EACH
 
         var oTable = $('#ordersTable').DataTable({
-            "lengthMenu": [[2, 4, 6, -1], [2, 4, 6, "All"]],
-            "order": [[6, 'asc']],
-            "columnDefs": [
+          "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
+          "order": [[6, 'asc']],
+          "columnDefs": [
               {"targets": [0,7], "orderable": false}
-              // { "width": "10px", "targets": [0,1,2,3,4,5,7]},
-              // { "width": "20px", "targets": [6]}
-              ],
-              // "autoWidth": true,
-            "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
-                    '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
-            "pagingType": "full_numbers"
+            ],
+          "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
+                  '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
+          "pagingType": "full_numbers",
         });  // dataTable config   
-        // resize headers when window is resized 
-        // $(window).bind('resize', function(){
-        //     oTable.fnAdjustColumnSizing();
-        // });
+
+        // driver for editing datatable
+        var changeDataHashTable = [];
+        var editableArray = document.querySelector('#ordersTable');
+        editableArray.addEventListener('')
+        editableArray.addEventListener('keydown', function(e){
+          if (e.code=="Enter"){
+            // enter key is pressed, send data
+            // get text, index, index name, and firebase ID
+            var newData = e.target.innerText;
+            var FBKey = e.target.parentNode.lastChild.innerText;
+            var IndexCol = e.target.cellIndex;
+            var firebaseCol = document.querySelectorAll('#ordersTable thead tr th')[IndexCol].innerText;
+            switch (firebaseCol){
+              case "Order#":
+                firebaseCol="order_num";
+                break;
+              case "Name": 
+                firebaseCol="name";    
+                break;
+              case "Address": 
+                firebaseCol="address"; 
+                break;
+              case "Items": 
+                firebaseCol="items";   
+                break;
+              case "Deadline":
+                firebaseCol="deadline";
+                break;
+            }
+            // send query
+            // create the object to send
+            objToSend = {};
+            objToSend[firebaseCol] = newData;
+            new Firebase('https://square1.firebaseio.com/orders/'+ FBKey).update(objToSend);
+            //move focus down
+            try {
+              // down
+              e.target.parentNode.nextSibling.children[IndexCol].focus();
+            }
+            catch(err) {
+              // can't move down
+              e.target.blur();
+            }
+          }
+        }, false);
+
+        // editable stuff
+        // when a cell loses focus, edit it/send to firebase
+        $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
+
         // show more details--------------------------------------------------------
         function details(d){
           return '<h4> Need more details for ' + d[2] + ' ! </h4>';
         }
 
-
         // Add event listener for opening and closing details
-          $('#ordersTable-body').on('click', 'td .btn', function () {
-              var tr = $(this).closest('tr');
-              var row = oTable.row(tr);
-       
-              if ( row.child.isShown() ) {
-                  // This row is already open - close it
-                  row.child.hide();
-                  tr.removeClass('shown');
-              }
-              else {
-                  // Open this row
-                  row.child(details(row.data())).show();
-                  tr.addClass('shown');
-              }
-          } );
-
-        });  // orderRef.once  
+        $('#ordersTable-body').on('click', 'td .btn', function () {
+          var tr = $(this).closest('tr');
+          var row = oTable.row(tr);
+   
+          if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+          }
+          else {
+            // Open this row
+            row.child(details(row.data())).show();
+            tr.addClass('shown');
+          }
+        });
+      });  //end orderRef.once  
       
 
       // add item functionality -----------------------------------------
