@@ -28,20 +28,18 @@
                             <tbody id = "taskTable">
                             </tbody>
                         </table>
-<!--
-                        <form id = "new_inventory_entry" class ="form-inline inventory-form">
-                            <input type ="text" class ="form-control" id ="part_input" placeholder="Part/Material">
-                            <input type ="number" class ="form-control" id ="quantity_input" placeholder="Quantity">
-                            <input type ="number" class ="form-control" id ="reorder_input" placeholder="Reorder Level">
-                            <input type ="number" class ="form-control" id ="cost_input" placeholder="Cost/Unit">
-                            <input type ="text" class ="form-control" id="location_input" placeholder="Location">
-                            <input type ="text" class ="form-control" id="link_input" placeholder="Link">
-                            <button type ="submit" class="btn btn-success" id="add_to_firebase">Add Task</button>
-                        </form>
                         <div>
                             <button id="add_item" class="btn btn-outline btn-info btn-block">Add Task to Table</button>
                         </div>
--->
+                        <p>
+                        <form id = "new_task_entry" class ="form-inline inventory-form">
+                            <input type ="number" class ="form-control" id ="order_input" placeholder="Order #">
+                            <input type ="text" class ="form-control" id ="item_input" placeholder="Item">
+                            <input type ="text" class ="form-control" id ="location_input" placeholder="Location">
+                            <input type ="text" class ="form-control" id ="nextTask_input" placeholder="Next Task">
+                            <input type ="text" class ="form-control" id="member_input" placeholder="Member Name">
+                            <button type ="submit" class="btn btn-success" id="add_to_firebase">Add Task</button>
+                        </form>
                     </div>
                 </div>      
             </div>

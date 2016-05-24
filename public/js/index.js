@@ -404,15 +404,15 @@ function loadFirebase(id){
           
       case "tasks":
           var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
-              tasksRef.set({
-                "3001" : {
-                  Order: "3001",
-                  Item: "Quad Speaker",
-                  location: "Bin 50/Shelf 50",
-                  next_task: "Wire switch panel",
-                  team_member: "Tim"
-                }
-              });
+//              tasksRef.set({
+//                "3001" : {
+//                  Order: "3001",
+//                  Item: "Quad Speaker",
+//                  location: "Bin 50/Shelf 50",
+//                  next_task: "Wire switch panel",
+//                  team_member: "Tim"
+//                }
+//              });
  
           tasksRef.on("value", function(snapshot){
               var table = document.getElementById("taskTable");
@@ -428,8 +428,23 @@ function loadFirebase(id){
                   row.insertCell(6).innerHTML = ' <button class="btn btn-secondary">Next</button>'
               })
               
+              document.getElementById("new_task_entry").style.display='none';
+              var buttonID = document.getElementById("add_item");
+              buttonID.onclick = function(){
+                  document.getElementById("new_task_entry").style.display='block';
+              }
               
-              
+              var addTask = document.getElementById("add_to_firebase");
+                  addTask.onclick = function(){
+                    tasksRef.push({
+                      Order:document.getElementById("order_input").value,
+                      Item:document.getElementById("item_input").value,
+                      location:document.getElementById("location_input").value,
+                      next_task:document.getElementById("nextTask_input").value,
+                      team_member:document.getElementById("member_input").value    
+                      
+                    })
+                  }      
           })
           
           break;
