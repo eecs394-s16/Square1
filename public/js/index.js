@@ -24,17 +24,26 @@ function load(id) {
 
       });
       break;
+          
     case "orders":
       jQuery.get('pages/orders.html', function(data) {
         document.getElementById("page-wrapper").innerHTML = data;
         loadFirebase(id);
       });
       break;
+        
+    case "tasks":
+      $('#page-wrapper').load('pages/tasks.html', function(data){
+          loadFirebase(id);
+      });
+      break;
+          
 
     case "shipping":
       $('#page-wrapper').load('pages/shipping.html');
       loadFirebase(id);
       break;
+          
     default:
       console.log("got bad load id");
   }
@@ -89,7 +98,9 @@ function loadFirebase(id){
           row.insertCell(3).innerHTML = newItem.Sourcing.ReorderLevel;
           row.insertCell(4).innerHTML = newItem.Sourcing.Cost;
           row.insertCell(5).innerHTML = newItem.Sourcing.Location;
-          row.insertCell(6).innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>'
+          row.insertCell(6).innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
+          row.insertCell(7).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm"></button><button class="glyphicon glyphicon-remove btn-sm"></button></div>'
+            
         })
       })
 
@@ -336,6 +347,8 @@ function loadFirebase(id){
       }
 
       break;
+          
+          
     case "shipping":
       // -------------------------------------------------------------------------
       // SHIPPING
@@ -388,6 +401,41 @@ function loadFirebase(id){
         });
       });
       break;
+          
+      case "tasks":
+          var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
+              tasksRef.set({
+                "3001" : {
+                  Order: "3001",
+                  Item: "Quad Speaker",
+                  location: "Bin 50/Shelf 50",
+                  next_task: "Wire switch panel",
+                  team_member: "Tim"
+                }
+              });
+ 
+          tasksRef.on("value", function(snapshot){
+              var table = document.getElementById("taskTable");
+              snapshot.forEach(function(data){
+                  var newItem = data.val();
+                  var row = table.insertRow(0);
+                  row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
+                  row.insertCell(1).innerHTML = newItem.Order
+                  row.insertCell(2).innerHTML = newItem.Item;
+                  row.insertCell(3).innerHTML = newItem.location;
+                  row.insertCell(4).innerHTML = newItem.next_task;
+                  row.insertCell(5).innerHTML = newItem.team_member;
+                  row.insertCell(6).innerHTML = ' <button class="btn btn-secondary">Next</button>'
+              })
+              
+              
+              
+          })
+          
+          break;
+          
+          
+          
     default:
       console.log("got bad load id");
   }
