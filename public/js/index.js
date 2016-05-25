@@ -128,7 +128,7 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       // orders
       // -------------------------------------------------------------------------
-      var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
+      var ordersRef = new Firebase(addr.orders);
       ordersRef.once("value", function(snapshot) {
         var table = document.getElementById("ordersTable-body");
 
@@ -145,19 +145,19 @@ function loadFirebase(id){
           // insert following data 
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
-          col_order_num.setAttribute("contenteditable", true);
+          col_order_num.setAttribute("contenteditable", false);
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
-          col_name.setAttribute("contenteditable", true);
+          col_name.setAttribute("contenteditable", false);
           var col_address = row.insertCell(colIndex++);
           col_address.innerHTML = newItem.address;
-          col_address.setAttribute("contenteditable", true);
+          col_address.setAttribute("contenteditable", false);
           var col_items = row.insertCell(colIndex++);
           col_items.innerHTML = newItem.items;
-          col_items.setAttribute("contenteditable", true);
+          col_items.setAttribute("contenteditable", false);
           var col_deadline = row.insertCell(colIndex++);
           col_deadline.innerHTML = newItem.deadline;
-          col_deadline.setAttribute("contenteditable", true);
+          col_deadline.setAttribute("contenteditable", false);
 
           // calculate the days left 
           var sortColindex = colIndex;
@@ -166,10 +166,8 @@ function loadFirebase(id){
           var daysLeft = getTimeLeft(newItem.deadline);
           col_dayLeft.innerHTML = daysLeft;
 
-
-          // insert view button
-          row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
-          'class="viewMore_btn" data-toggle="collapse" data-target="#demo"}>View</button>';
+          // edit
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" onclick="driver.editEntry(event)"></button>'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
@@ -197,77 +195,74 @@ function loadFirebase(id){
 
         var oTable = $('#ordersTable').DataTable({
           "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
-          "order": [[6, 'asc']],
-          "columnDefs": [
-              {"targets": [0,7], "orderable": false}
-            ],
-          "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
-                  '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
-          "pagingType": "full_numbers",
+          // "order": [[6, 'asc']],
+          // "columnDefs": [
+          //     {"targets": [0,7], "orderable": false}
+          //   ],
+          // "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
+          //         '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
+          // "pagingType": "full_numbers",
           "bAutoWidth" : false,
-          "scrollX": true,
-          "scrollY": true,
+          // "scrollX": true,
+          // "scrollY": true,
           "initComplete" : function () {
             $('.dataTables_scrollBody thead tr').addClass('hidden');
           },
-          // "aoColumnDefs": [
-          //   { "sWidth": "10%", "aTargets": [ -1 ] }
-          // ]
-        });  // dataTable config  
+        });  
 
         // driver for editing datatable
-        var changeDataHashTable = [];
-        var editableArray = document.querySelector('#ordersTable');
-        editableArray.addEventListener('keydown', function(e){
-          if (e.code=="Enter"){
-            // enter key is pressed, send data
-            // get text, index, index name, and firebase ID
-            var newData = e.target.innerText;
-            var FBKey = e.target.parentNode.lastChild.innerText;
-            var IndexCol = e.target.cellIndex;
-            var firebaseCol = document.querySelectorAll('#ordersTable thead tr th')[IndexCol].innerText;
-            switch (firebaseCol){
-              case "Order#":
-                firebaseCol="order_num";
-                break;
-              case "Name": 
-                firebaseCol="name";    
-                break;
-              case "Address": 
-                firebaseCol="address"; 
-                break;
-              case "Items": 
-                firebaseCol="items";   
-                break;
-              case "Deadline":
-                firebaseCol="deadline";
-                break;
-            }
-            // send query
-            // create the object to send
-            objToSend = {};
-            objToSend[firebaseCol] = newData;
-            new Firebase('https://square1.firebaseio.com/orders/'+ FBKey).update(objToSend);
-            //move focus down
-            try {
-              // down
-              e.target.parentNode.nextSibling.children[IndexCol].focus();
-            }
-            catch(err) {
-              // can't move down
-              e.target.blur();
-            }
-          }  // if (enter)
-        }, false);  // keydown eventlistener
+        // var changeDataHashTable = [];
+        // var editableArray = document.querySelector('#ordersTable');
+        // editableArray.addEventListener('keydown', function(e){
+        //   if (e.code=="Enter"){
+        //     // enter key is pressed, send data
+        //     // get text, index, index name, and firebase ID
+        //     var newData = e.target.innerText;
+        //     var FBKey = e.target.parentNode.lastChild.innerText;
+        //     var IndexCol = e.target.cellIndex;
+        //     var firebaseCol = document.querySelectorAll('#ordersTable thead tr th')[IndexCol].innerText;
+        //     switch (firebaseCol){
+        //       case "Order#":
+        //         firebaseCol="order_num";
+        //         break;
+        //       case "Name": 
+        //         firebaseCol="name";    
+        //         break;
+        //       case "Address": 
+        //         firebaseCol="address"; 
+        //         break;
+        //       case "Items": 
+        //         firebaseCol="items";   
+        //         break;
+        //       case "Deadline":
+        //         firebaseCol="deadline";
+        //         break;
+        //     }
+        //     // send query
+        //     // create the object to send
+        //     objToSend = {};
+        //     objToSend[firebaseCol] = newData;
+        //     new Firebase('https://square1.firebaseio.com/orders/'+ FBKey).update(objToSend);
+        //     //move focus down
+        //     try {
+        //       // down
+        //       e.target.parentNode.nextSibling.children[IndexCol].focus();
+        //     }
+        //     catch(err) {
+        //       // can't move down
+        //       e.target.blur();
+        //     }
+        //   }  // if (enter)
+        // }, false);  // keydown eventlistener
 
         // editable stuff
         // when a cell loses focus, edit it/send to firebase
         // $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
 
         // show more details--------------------------------------------------------
-        function details(d){
-          return '<h4> Need more details for ' + d[2] + ' ! </h4>';
-        }
+        // function details(d){
+        //   return '<h4> Need more details for ' + d[2] + ' ! </h4>';
+        // }
 
         // Add event listener for opening and closing details
         $('#ordersTable-body').on('click', 'td .btn', function () {
@@ -286,51 +281,8 @@ function loadFirebase(id){
           }
         });
       });  //end orderRef.once  
-      
 
-      // add item functionality -----------------------------------------
-      document.getElementById("new_orders_entry").style.display='none';
-      var buttonID = document.getElementById("add_item");
-      var ifAddEntryBool = false;
-      buttonID.onclick = toggleAddEntryButton;
-
-      var addFirebase = document.getElementById("add_to_firebase");
-      addFirebase.onclick = function(){
-        ordersRef.push({
-          "order_num":    document.getElementById("order_num_input").value,
-          "name":         document.getElementById("name_input").value,
-          "address":      document.getElementById("address_input").value,
-          "items":        document.getElementById("items_input").value,
-          "deadline":     document.getElementById("deadline_input").value,
-        });
-        // showNewItem();;
-        toggleAddEntryButton();
-        clearFormInputs();
-        // $('#page-wrapper').load('pages/orders.html');
-        load("orders");
-      } // addFirebase
       //----------------------------function -------------------------------
-
-      function toggleAddEntryButton(){
-        if (ifAddEntryBool){
-          document.getElementById("new_orders_entry").style.display='none';
-          document.getElementById("add_item").innerHTML = "Add Item to Inventory";
-          ifAddEntryBool = false; 
-        }
-        else {
-          document.getElementById("new_orders_entry").style.display='block';
-          document.getElementById("add_item").innerHTML = "Cancel";
-          ifAddEntryBool = true;
-        }
-      }
-
-      function clearFormInputs(){
-        document.getElementById("order_num_input").value = "";
-        document.getElementById("name_input").value = "";
-        document.getElementById("address_input").value = "";
-        document.getElementById("items_input").value = "";
-        document.getElementById("deadline_input").value = "";
-      }
 
       function getTimeLeft(deadline){
         var dateObj = new Date(deadline);  // convert string to date object 
@@ -404,15 +356,15 @@ function loadFirebase(id){
           
       case "tasks":
           var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
-//              tasksRef.set({
-//                "3001" : {
-//                  Order: "3001",
-//                  Item: "Quad Speaker",
-//                  location: "Bin 50/Shelf 50",
-//                  next_task: "Wire switch panel",
-//                  team_member: "Tim"
-//                }
-//              });
+          //              tasksRef.set({
+          //                "3001" : {
+          //                  Order: "3001",
+          //                  Item: "Quad Speaker",
+          //                  location: "Bin 50/Shelf 50",
+          //                  next_task: "Wire switch panel",
+          //                  team_member: "Tim"
+          //                }
+          //              });
  
           tasksRef.on("value", function(snapshot){
               var table = document.getElementById("taskTable");
@@ -491,7 +443,7 @@ function bottleneckLogic(){
   });
 
   // orders BOTTLENECK CODE  --------------------------------------------------- 
-  var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
+  var ordersRef = new Firebase(addr.orders);
   // do something
   // modify widget
 
@@ -503,4 +455,66 @@ function bottleneckLogic(){
     a +=  "<td> <b> <span style='color : red'>" + String(k.Sourcing.Quantity) + "</span> </b> </td> <tr>";
     return a;
   }
+}
+
+// global object of drivers
+driver = {
+  editEntry: function(e){
+    switch (e.target.innerHTML){
+      case "":
+        // uneditable -> editable
+        // change style
+        e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
+        console.log("testing");
+        // make editable
+        tdArr = e.target.parentElement.parentElement.children;
+        for (var i=0; i<tdArr.length; i++){
+          if (tdArr[i].getAttribute("contenteditable") != null){
+            tdArr[i].setAttribute("contenteditable", true);
+          }
+        }
+          
+        // change button
+        e.target.setAttribute("class", "");
+        e.target.innerHTML = "submit";
+        break;
+      case "submit":
+        // editable -> uneditable
+        // send to firebase
+        // reload
+        // change style
+        e.target.parentElement.parentElement.style.backgroundColor = "";
+        console.log("testing");
+        // make editable
+        tdArr = e.target.parentElement.parentElement.children;
+        for (var i=0; i<tdArr.length; i++){
+          if (tdArr[i].getAttribute("contenteditable") != null){
+            tdArr[i].setAttribute("contenteditable", false);
+          }
+        }
+        // change button
+        e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
+        e.target.innerHTML = "";
+        break;
+    }
+  },
+  addEmptyItem: function(e){
+    // add empty item
+    var ordersRef = new Firebase(addr.orders);
+    ordersRef.push({
+      "order_num":  "",
+      "name":       "",
+      "address":    "",
+      "items":      "",
+      "deadline":   "",
+    });
+    // make sure it's loaded from firebase back to page
+    load("orders");
+    // call driver.editEntry with the new item
+  },
+}
+
+// global refs
+addr = {
+  orders: "https://square1.firebaseio.com/orders",
 }
