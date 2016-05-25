@@ -79,27 +79,74 @@ function loadFirebase(id){
           var remainingInventory = newItem.Sourcing.Quantity;
           var reorder_level = newItem.Sourcing.ReorderLevel;
           var reorder_threshold = reorder_level*0.1
+          
+          cell0 = row.insertCell(0);
+          cell0.setAttribute('contenteditable',false);
+          
+          cell1 = row.insertCell(1);
+          cell1.setAttribute('contenteditable',false);  
+          cell2 = row.insertCell(2);
+          
+          cell2.setAttribute('contenteditable',false);  
+          cell3 = row.insertCell(3);
+          cell3.setAttribute('contenteditable',false);
+          
+          cell4 = row.insertCell(4);
+          cell4.setAttribute('contenteditable',false);
+            
+          cell5 = row.insertCell(5);
+          cell5.setAttribute('contenteditable',false);
+            
+          cell6 = row.insertCell(6);
+          cell6.setAttribute('contenteditable',false);
+            
+          cell7 = row.insertCell(7);
+          cell7.setAttribute('contenteditable',false);
 
           if (remainingInventory == 0) {
-            row.insertCell(0).innerHTML = '<div class ="foo wine"></div>'
+            cell0.innerHTML = '<div class ="foo wine"></div>'
           }
           else if (remainingInventory > reorder_level){
-            row.insertCell(0).innerHTML = '<div class ="foo green"></div>'
+            cell0.innerHTML = '<div class ="foo green"></div>'
           }
           else if (remainingInventory <= 5 || remainingInventory <= reorder_threshold){
-            row.insertCell(0).innerHTML = '<div class ="foo yellow"></div>'
+            cell0.innerHTML = '<div class ="foo yellow"></div>'
           }
           else {
-            row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
+            cell0.innerHTML = '<div class ="foo orange"></div>'
           }
 
-          row.insertCell(1).innerHTML = newItem.Part;
-          row.insertCell(2).innerHTML = newItem.Sourcing.Quantity;
-          row.insertCell(3).innerHTML = newItem.Sourcing.ReorderLevel;
-          row.insertCell(4).innerHTML = newItem.Sourcing.Cost;
-          row.insertCell(5).innerHTML = newItem.Sourcing.Location;
-          row.insertCell(6).innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
-          row.insertCell(7).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm"></button><button class="glyphicon glyphicon-remove btn-sm"></button></div>'
+          cell1.innerHTML = newItem.Part;
+          cell2.innerHTML = newItem.Sourcing.Quantity;
+          cell3.innerHTML = newItem.Sourcing.ReorderLevel;
+          cell4.innerHTML = newItem.Sourcing.Cost;
+          cell5.innerHTML = newItem.Sourcing.Location;
+          cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
+          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
+          
+          document.getElementById("edit_button").onclick=editRow;
+          document.getElementById("remove_button").onclick = deleteRow;
+          
+          function deleteRow(){
+              $(this).closest('tr').remove();
+          }
+              
+           
+          function editRow(){
+              cell7.innerHTML='<button class ="glyphicon glyphicon-ok btn-sm" id="edit_confirm"></button>'
+              cell1.setAttribute('contenteditable',true);
+              cell2.setAttribute('contenteditable',true);
+              cell3.setAttribute('contenteditable',true);
+              cell4.setAttribute('contenteditable',true);
+              cell5.setAttribute('contenteditable',true);
+              cell6.setAttribute('contenteditable',true); 
+              
+              document.getElementById("edit_confirm").onclick =confirmEdit;
+              function confirmEdit(){
+                  cell7.innerHTML ='<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
+              }
+              
+          }
             
         })
       })
@@ -109,6 +156,8 @@ function loadFirebase(id){
       buttonID.onclick = function(){
         document.getElementById("new_inventory_entry").style.display='block';
       }
+      
+
 
       var addFirebase = document.getElementById("add_to_firebase");
       addFirebase.onclick = function(){
@@ -419,13 +468,27 @@ function loadFirebase(id){
               snapshot.forEach(function(data){
                   var newItem = data.val();
                   var row = table.insertRow(0);
-                  row.insertCell(0).innerHTML = '<div class ="foo orange"></div>'
-                  row.insertCell(1).innerHTML = newItem.Order
-                  row.insertCell(2).innerHTML = newItem.Item;
-                  row.insertCell(3).innerHTML = newItem.location;
-                  row.insertCell(4).innerHTML = newItem.next_task;
-                  row.insertCell(5).innerHTML = newItem.team_member;
-                  row.insertCell(6).innerHTML = ' <button class="btn btn-secondary">Next</button>'
+                  cell0 = row.insertCell(0);
+                  cell0.setAttribute('contenteditable',false);
+                  cell1 = row.insertCell(1);
+                  cell1.setAttribute('contenteditable',false);
+                  cell2 = row.insertCell(2);
+                  cell2.setAttribute('contenteditable',false);
+                  cell3 = row.insertCell(3);
+                  cell3.setAttribute('contenteditable',false);
+                  cell4 = row.insertCell(4);
+                  cell4.setAttribute('contenteditable',false);
+                  cell5 = row.insertCell(5);
+                  cell4.setAttribute('contenteditable',false);
+                  cell6 = row.insertCell(6);
+                  
+                  cell0.innerHTML = '<div class ="foo orange"></div>'
+                  cell1.innerHTML = newItem.Order
+                  cell2.innerHTML = newItem.Item;
+                  cell3.innerHTML = newItem.location;
+                  cell4.innerHTML = newItem.next_task;
+                  cell5.innerHTML = newItem.team_member;
+                  cell6.innerHTML = ' <button class="btn btn-secondary">Next</button>'
               })
               
               document.getElementById("new_task_entry").style.display='none';
