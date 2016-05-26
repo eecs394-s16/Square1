@@ -102,6 +102,11 @@ function loadFirebase(id){
             
           cell7 = row.insertCell(7);
           cell7.setAttribute('contenteditable',false);
+            
+          var hiddenKey=row.insertCell(8);
+          hiddenKey.innerHTML=data.key();
+          hiddenKey.style.display='none';
+            
 
           if (remainingInventory == 0) {
             cell0.innerHTML = '<div class ="foo wine"></div>'
@@ -126,13 +131,26 @@ function loadFirebase(id){
           
           document.getElementById("edit_button").onclick=editRow;
           document.getElementById("remove_button").onclick = deleteRow;
-          
+
+            
           function deleteRow(){
-              $(this).closest('tr').remove();
-          }
+              removed_tr = $(this).closest('tr').remove();
+              var fb_key = $(removed_tr).children('td:last').text();
+              inventoryRef.child(fb_key).remove();              
               
+          }
+            
+              
+            
            
           function editRow(){
+//              var currentTD = $(this).parents('tr').find('td')
+//              $.each(currentTD, function(){
+//                  $(this).prsop('contenteditable',true)
+//              });
+              var currentTD = $(this).parents('tr').find('td');
+        
+              
               cell7.innerHTML='<button class ="glyphicon glyphicon-ok btn-sm" id="edit_confirm"></button>'
               cell1.setAttribute('contenteditable',true);
               cell2.setAttribute('contenteditable',true);
