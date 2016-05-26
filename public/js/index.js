@@ -129,42 +129,43 @@ function loadFirebase(id){
           cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
           cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
           
-          document.getElementById("edit_button").onclick=editRow;
+//          document.getElementById("edit_button").onclick=editRow;
+//          $(document.getElementById("edit_button")).on('click',editRow);
+//          document.getElementById("edit_button")=editRow;
           document.getElementById("remove_button").onclick = deleteRow;
 
             
           function deleteRow(){
               removed_tr = $(this).closest('tr').remove();
               var fb_key = $(removed_tr).children('td:last').text();
-              inventoryRef.child(fb_key).remove();              
-              
+              inventoryRef.child(fb_key).remove();                        
           }
             
-              
-            
-           
-          function editRow(){
-//              var currentTD = $(this).parents('tr').find('td')
-//              $.each(currentTD, function(){
-//                  $(this).prsop('contenteditable',true)
-//              });
-              var currentTD = $(this).parents('tr').find('td');
-        
-              
-              cell7.innerHTML='<button class ="glyphicon glyphicon-ok btn-sm" id="edit_confirm"></button>'
-              cell1.setAttribute('contenteditable',true);
-              cell2.setAttribute('contenteditable',true);
-              cell3.setAttribute('contenteditable',true);
-              cell4.setAttribute('contenteditable',true);
-              cell5.setAttribute('contenteditable',true);
-              cell6.setAttribute('contenteditable',true); 
-              
-              document.getElementById("edit_confirm").onclick =confirmEdit;
-              function confirmEdit(){
-                  cell7.innerHTML ='<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
+          $(document.getElementById("edit_button")).on('click',function() {
+
+              var currentTD = $(this).closest('tr').children('td');
+              for (var i=1; i<currentTD.length-3; ++i){
+                  currentTD[i].setAttribute('contenteditable',true);
+              }
+    
+              for (var i=1; i<currentTD.length; ++i){
+
+                  if(i==7){
+                      currentTD[i].innerHTML='<button class ="glyphicon glyphicon-ok btn-sm" id="edit_confirm"></button>';
+                      document.getElementById("edit_confirm").onclick =confirmEdit;
+                      function confirmEdit(){
+                          currentTD[7].innerHTML ='<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
+                          for(var i=0; i<currentTD.length;++i){
+                              currentTD[i].setAttribute('contenteditable',false);
+                          }
+                      }
+
+                  }
+                  
+                  
               }
               
-          }
+          });          
             
         })
       })
@@ -173,23 +174,38 @@ function loadFirebase(id){
       var buttonID = document.getElementById("add_item");
       buttonID.onclick = function(){
         document.getElementById("new_inventory_entry").style.display='block';
+        var buttonPush = document.getElementById("add_item");
+        buttonPush.onclick =function(){
+            inventoryRef.push({
+                Part:document.getElementById("part_input").value,
+                Sourcing: {
+                    "Cost":document.getElementById("cost_input").value,
+                    "Quantity":document.getElementById("quantity_input").value,
+                    "ReorderLevel":document.getElementById("reorder_input").value,
+                    "Location":document.getElementById("location_input").value,
+                    "Link":document.getElementById("link_input").value
+                }
+                
+            })
+            
+        }
       }
       
 
 
-      var addFirebase = document.getElementById("add_to_firebase");
-      addFirebase.onclick = function(){
-        inventoryRef.push({
-          Part:document.getElementById("part_input").value,
-          Sourcing: {
-            "Cost":         document.getElementById("cost_input").value,
-            "Quantity":     document.getElementById("quantity_input").value,
-            "ReorderLevel": document.getElementById("reorder_input").value,
-            "Location":     document.getElementById("location_input").value,
-            "Link":         document.getElementById("link_input").value
-          }
-        })
-      }
+//      var addFirebase = document.getElementById("add_to_firebase");
+//      addFirebase.onclick = function(){
+//        inventoryRef.push({
+//          Part:document.getElementById("part_input").value,
+//          Sourcing: {
+//            "Cost":         document.getElementById("cost_input").value,
+//            "Quantity":     document.getElementById("quantity_input").value,
+//            "ReorderLevel": document.getElementById("reorder_input").value,
+//            "Location":     document.getElementById("location_input").value,
+//            "Link":         document.getElementById("link_input").value
+//          }
+//        })
+//      }
       break;
     case "orders":
       // -------------------------------------------------------------------------
