@@ -127,7 +127,7 @@ function loadFirebase(id){
           cell4.innerHTML = newItem.Sourcing.Cost;
           cell5.innerHTML = newItem.Sourcing.Location;
           cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
-          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
+          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
           
 //          document.getElementById("edit_button").onclick=editRow;
           document.getElementById("remove_button").onclick = deleteRow;
@@ -150,10 +150,10 @@ function loadFirebase(id){
               for (var i=1; i<currentTD.length; ++i){
 
                   if(i==7){
-                      currentTD[i].innerHTML='<button class ="glyphicon glyphicon-ok btn-sm" id="edit_confirm"></button>';
+                      currentTD[i].innerHTML='<button class ="glyphicon glyphicon-ok btn-sm glyphic-green" id="edit_confirm"></button>';
                       document.getElementById("edit_confirm").onclick =confirmEdit;
                       function confirmEdit(){
-                          currentTD[7].innerHTML ='<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
+                          currentTD[7].innerHTML ='<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
                           for(var i=0; i<currentTD.length;++i){
                               currentTD[i].setAttribute('contenteditable',false);
                               var fb_key = currentRow.children('td:last').text();

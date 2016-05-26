@@ -70,3 +70,15 @@ margin: 0;
 cursor: pointer;
 * cursor: hand;
 }
+
+.glyphic-red{
+    color:red;
+}
+
+.glyphic-green{
+    color:green;
+}
+
+.glyphic-cadetblue{
+    color:blue;
+}
