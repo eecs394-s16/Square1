@@ -130,8 +130,6 @@ function loadFirebase(id){
           cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
           
 //          document.getElementById("edit_button").onclick=editRow;
-//          $(document.getElementById("edit_button")).on('click',editRow);
-//          document.getElementById("edit_button")=editRow;
           document.getElementById("remove_button").onclick = deleteRow;
 
             
@@ -143,7 +141,8 @@ function loadFirebase(id){
             
           $(document.getElementById("edit_button")).on('click',function() {
 
-              var currentTD = $(this).closest('tr').children('td');
+              var currentRow = $(this).closest('tr');
+              var currentTD = currentRow.children('td');
               for (var i=1; i<currentTD.length-3; ++i){
                   currentTD[i].setAttribute('contenteditable',true);
               }
@@ -157,6 +156,16 @@ function loadFirebase(id){
                           currentTD[7].innerHTML ='<button class="glyphicon glyphicon-edit btn-sm" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm" id="remove_button"></button></div>';
                           for(var i=0; i<currentTD.length;++i){
                               currentTD[i].setAttribute('contenteditable',false);
+                              var fb_key = currentRow.children('td:last').text();
+                              inventoryRef.child(fb_key).update({
+                                  Part:currentTD[1].innerHTML,
+                                  Sourcing:{
+                                      "Cost":currentTD[4].innerHTML,
+                                      "Quantity":currentTD[2].innerHTML,
+                                      "ReorderLevel":currentTD[3].innerHTML,
+                                      "Location":currentTD[5].innerHTML
+                                  }
+                              })
                           }
                       }
 
