@@ -2,8 +2,8 @@
 
 // onload, load in the dashboard
 $( document ).ready(function() {
-  load("orders");
-  // load("dash");
+  // load("orders");
+  load("dash");
 });
 
 // loads pages by redrawing page-wrapper DOM
@@ -127,7 +127,7 @@ function loadFirebase(id){
           cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
           cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
           
-//          document.getElementById("edit_button").onclick=editRow;
+      //          document.getElementById("edit_button").onclick=editRow;
           document.getElementById("remove_button").onclick = deleteRow;
 
             
