@@ -27,12 +27,12 @@
     background: #e68a00;
 }
 
-.firstcol {
+/*.firstcol {
   border-right: 1px solid #e6e6e6;
 }
 .lastcol {
   border-left: 1px solid #e6e6e6;
-}
+}*/
 
 #redFilledCircle {
   width: 25px;
@@ -59,6 +59,15 @@
   -moz-border-radius: 25px;
   border-radius: 25px;
   background: yellow;
+}
+
+#orangeFilledCircle {
+  width: 25px;
+  height: 25px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  border-radius: 25px;
+  background: orange;
 }
 table thead {
    background-color: #e6e6e6;

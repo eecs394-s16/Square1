@@ -47,8 +47,6 @@ function load(id) {
     default:
       console.log("got bad load id");
   }
-
-
 }
 
 // firebase stuff ------------------------------------------------------------------------------------
@@ -220,8 +218,12 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       // orders
       // -------------------------------------------------------------------------
-      var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
-      ordersRef.once("value", function(snapshot) {
+      // clear the table in case there's anything there
+      // get firebase stuff
+      var ordersRef = new Firebase(addr.orders);
+
+      makeTable = function(snapshot) {
+        document.getElementById("ordersTable-body").innerHTML = "";
         var table = document.getElementById("ordersTable-body");
 
         snapshot.forEach(function(data) {
@@ -232,212 +234,56 @@ function loadFirebase(id){
           // first create the status column with defult color circle 
           var col_status = row.insertCell(colIndex++);
           col_status.innerHTML = '<div class ="foo orange"></div>'
+
           col_status.setAttribute("class", "firstcol")
 
           // insert following data 
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
-          col_order_num.setAttribute("contenteditable", true);
+          col_order_num.setAttribute("contenteditable", false);
+          col_order_num.setAttribute("celltype", "order_num");  
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
-          col_name.setAttribute("contenteditable", true);
+          col_name.setAttribute("contenteditable", false);
+          col_name.setAttribute("celltype", "name");
           var col_address = row.insertCell(colIndex++);
           col_address.innerHTML = newItem.address;
-          col_address.setAttribute("contenteditable", true);
+          col_address.setAttribute("contenteditable", false);
+          col_address.setAttribute("celltype", "address");
           var col_items = row.insertCell(colIndex++);
           col_items.innerHTML = newItem.items;
-          col_items.setAttribute("contenteditable", true);
+          col_items.setAttribute("contenteditable", false);
+          col_items.setAttribute("celltype", "item");
           var col_deadline = row.insertCell(colIndex++);
           col_deadline.innerHTML = newItem.deadline;
-          col_deadline.setAttribute("contenteditable", true);
+          col_deadline.setAttribute("contenteditable", false);
+          col_deadline.setAttribute("celltype", "deadline");
+
 
           // calculate the days left 
           var sortColindex = colIndex;
           var col_dayLeft = row.insertCell(colIndex++);
           col_dayLeft.setAttribute("style", "font-weight:bold");
-          var daysLeft = getTimeLeft(newItem.deadline);
+          var daysLeft = driver.getTimeLeft(newItem.deadline);
           col_dayLeft.innerHTML = daysLeft;
 
-
-          // insert view button
-          row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
-          'class="viewMore_btn" data-toggle="collapse" data-target="#demo"}>View</button>';
+          // edit
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
           hidden_key.innerHTML = data.key();
           hidden_key.style.display='none';
 
-          // according to daysleft to change the color of the circle in status columns
-          // but without completion check 
-          if (daysLeft == 0 ) {
-            col_status.innerHTML = '<div id = "redFilledCircle"></div>';
-
-            // to do check whether complete or not ------------------------
-          }
-          else if (daysLeft <= 7){
-            col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
-          }
-          else if (daysLeft > 7){
-            col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
-          }
-          else {
-            col_status.innerHTML = '<div class ="foo orange"></div>';
-          }
-          // 
+          // update
+          driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-
-        var oTable = $('#ordersTable').DataTable({
-          "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
-          "order": [[6, 'asc']],
-          "columnDefs": [
-              {"targets": [0,7], "orderable": false}
-            ],
-          "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
-                  '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
-          "pagingType": "full_numbers",
-          "bAutoWidth" : false,
-          "scrollX": true,
-          "scrollY": true,
-          "initComplete" : function () {
-            $('.dataTables_scrollBody thead tr').addClass('hidden');
-          },
-          // "aoColumnDefs": [
-          //   { "sWidth": "10%", "aTargets": [ -1 ] }
-          // ]
-        });  // dataTable config  
-
-        // driver for editing datatable
-        var changeDataHashTable = [];
-        var editableArray = document.querySelector('#ordersTable');
-        editableArray.addEventListener('keydown', function(e){
-          if (e.code=="Enter"){
-            // enter key is pressed, send data
-            // get text, index, index name, and firebase ID
-            var newData = e.target.innerText;
-            var FBKey = e.target.parentNode.lastChild.innerText;
-            var IndexCol = e.target.cellIndex;
-            var firebaseCol = document.querySelectorAll('#ordersTable thead tr th')[IndexCol].innerText;
-            switch (firebaseCol){
-              case "Order#":
-                firebaseCol="order_num";
-                break;
-              case "Name": 
-                firebaseCol="name";    
-                break;
-              case "Address": 
-                firebaseCol="address"; 
-                break;
-              case "Items": 
-                firebaseCol="items";   
-                break;
-              case "Deadline":
-                firebaseCol="deadline";
-                break;
-            }
-            // send query
-            // create the object to send
-            objToSend = {};
-            objToSend[firebaseCol] = newData;
-            new Firebase('https://square1.firebaseio.com/orders/'+ FBKey).update(objToSend);
-            //move focus down
-            try {
-              // down
-              e.target.parentNode.nextSibling.children[IndexCol].focus();
-            }
-            catch(err) {
-              // can't move down
-              e.target.blur();
-            }
-          }  // if (enter)
-        }, false);  // keydown eventlistener
-
-        // editable stuff
-        // when a cell loses focus, edit it/send to firebase
-        // $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
-
-        // show more details--------------------------------------------------------
-        function details(d){
-          return '<h4> Need more details for ' + d[2] + ' ! </h4>';
-        }
-
-        // Add event listener for opening and closing details
-        $('#ordersTable-body').on('click', 'td .btn', function () {
-          var tr = $(this).closest('tr');
-          var row = oTable.row(tr);
-   
-          if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-          }
-          else {
-            // Open this row
-            row.child(details(row.data())).show();
-            tr.addClass('shown');
-          }
-        });
-      });  //end orderRef.once  
-      
-
-      // add item functionality -----------------------------------------
-      document.getElementById("new_orders_entry").style.display='none';
-      var buttonID = document.getElementById("add_item");
-      var ifAddEntryBool = false;
-      buttonID.onclick = toggleAddEntryButton;
-
-      var addFirebase = document.getElementById("add_to_firebase");
-      addFirebase.onclick = function(){
-        ordersRef.push({
-          "order_num":    document.getElementById("order_num_input").value,
-          "name":         document.getElementById("name_input").value,
-          "address":      document.getElementById("address_input").value,
-          "items":        document.getElementById("items_input").value,
-          "deadline":     document.getElementById("deadline_input").value,
-        });
-        // showNewItem();;
-        toggleAddEntryButton();
-        clearFormInputs();
-        // $('#page-wrapper').load('pages/orders.html');
-        load("orders");
-      } // addFirebase
-      //----------------------------function -------------------------------
-
-      function toggleAddEntryButton(){
-        if (ifAddEntryBool){
-          document.getElementById("new_orders_entry").style.display='none';
-          document.getElementById("add_item").innerHTML = "Add Item to Inventory";
-          ifAddEntryBool = false; 
-        }
-        else {
-          document.getElementById("new_orders_entry").style.display='block';
-          document.getElementById("add_item").innerHTML = "Cancel";
-          ifAddEntryBool = true;
-        }
       }
-
-      function clearFormInputs(){
-        document.getElementById("order_num_input").value = "";
-        document.getElementById("name_input").value = "";
-        document.getElementById("address_input").value = "";
-        document.getElementById("items_input").value = "";
-        document.getElementById("deadline_input").value = "";
-      }
-
-      function getTimeLeft(deadline){
-        var dateObj = new Date(deadline);  // convert string to date object 
-
-        var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-        var firstDate = dateObj;
-        var secondDate = new Date();
-
-        var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
-        if (diffDays <= 0)
-          diffDays = 0;
-
-        return diffDays;
-      }
-
+      // if anything happens, reload
+      ordersRef.on("value", makeTable);
+      ordersRef.on("child_added", makeTable);
+      ordersRef.on("child_changed", makeTable);
+      ordersRef.on("child_removed", makeTable);
       break;
           
           
@@ -496,15 +342,15 @@ function loadFirebase(id){
           
       case "tasks":
           var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
-//              tasksRef.set({
-//                "3001" : {
-//                  Order: "3001",
-//                  Item: "Quad Speaker",
-//                  location: "Bin 50/Shelf 50",
-//                  next_task: "Wire switch panel",
-//                  team_member: "Tim"
-//                }
-//              });
+          //              tasksRef.set({
+          //                "3001" : {
+          //                  Order: "3001",
+          //                  Item: "Quad Speaker",
+          //                  location: "Bin 50/Shelf 50",
+          //                  next_task: "Wire switch panel",
+          //                  team_member: "Tim"
+          //                }
+          //              });
  
           tasksRef.on("value", function(snapshot){
               var table = document.getElementById("taskTable");
@@ -562,7 +408,7 @@ function loadFirebase(id){
   }
 }
 
-// run bottleneck logic here, called from loadfirebase() in the dash case of that switch
+// run bottleneck logic here, called from loadFirebase() in the dash case of that switch
 function bottleneckLogic(){
   // bottleneck code here!
   // load all relevant firebase refs, iterate through to detect "bottlenecks"
@@ -597,7 +443,7 @@ function bottleneckLogic(){
   });
 
   // orders BOTTLENECK CODE  --------------------------------------------------- 
-  var ordersRef = new Firebase('https://square1.firebaseio.com/orders');
+  var ordersRef = new Firebase(addr.orders);
   // do something
   // modify widget
 
@@ -609,4 +455,234 @@ function bottleneckLogic(){
     a +=  "<td> <b> <span style='color : red'>" + String(k.Sourcing.Quantity) + "</span> </b> </td> <tr>";
     return a;
   }
+}
+
+// global object of driver
+driver = {
+  updateStatus: function(col_status, daysLeft) {
+    if (daysLeft == 0 ) {
+      col_status.innerHTML = '<div id = "redFilledCircle"></div>';
+
+    // to do check whether complete or not ------------------------
+    }
+    else if (daysLeft <= 7){
+      col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
+    }
+    else if (daysLeft > 7){
+      col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
+    }
+    else {
+      col_status.innerHTML = '<div id ="orangeFilledCircle"></div>';
+    }
+  },
+
+  getTimeLeft: function(deadline){
+    var dateObj = new Date(deadline);  // convert string to date object 
+
+    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    var firstDate = dateObj;
+    var secondDate = new Date();
+
+    var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
+    if (diffDays <= 0)
+      diffDays = 0;
+    return diffDays;
+  },  // getTimeLeft
+
+  tempEntry: "",
+
+  editEntry: function(e){
+    tempEntry = e.target.parentElement.parentElement.cloneNode(true);
+    switch (e.target.getAttribute("class")){
+      case "glyphicon glyphicon-edit btn-sm":
+        // uneditable -> editable
+
+        // console.log("testing");
+        // make editable
+        tdArr = e.target.parentElement.parentElement.children;
+        for (var i=0; i<tdArr.length; i++){
+          if (tdArr[i].getAttribute("contenteditable") != null){
+            tdArr[i].setAttribute("contenteditable", true);
+          }
+          switch (tdArr[i].getAttribute("celltype")){ 
+            case "order_num":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = '<strong>##</strong>';
+                tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+              }
+              break
+            case "name":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>first last</strong>";
+              }
+              break
+            case "address":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>address</strong>";
+              }
+              break
+            case "item":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>item name</strong>";
+              }
+              break
+            case "deadline":
+              // make input dom
+              var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'+tdArr[i].html+'</input>'; // HTML string
+              var div = document.createElement('div');
+              div.innerHTML = s;
+              var newDom = div.childNodes[0];
+              newDom.style.backgroundColor = "#ffd480";
+
+              // replace old dom
+              domToReplace = tdArr[i];
+              domToReplace.parentElement.insertBefore(newDom, domToReplace);
+              domToReplace.parentElement.removeChild(domToReplace);
+              tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+              break 
+          }
+        }
+          
+        // change button
+        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm");
+        // change cancel button too
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+
+        // change style
+        e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
+
+        break;
+
+      case "glyphicon glyphicon-ok btn-sm":
+        // editable -> uneditable
+        // send to firebase
+        // reload
+
+        // console.log("testing");
+        // make uneditable
+        tdArr = e.target.parentElement.parentElement.children;
+        for (var i=0; i<tdArr.length; i++){
+          if (tdArr[i].getAttribute("contenteditable") != null){
+            tdArr[i].setAttribute("contenteditable", false);
+          }
+        }
+        // change button
+        e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+
+        // send to firebase 
+        entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+        entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
+
+        // get all data with false contenteditable
+        dataToSend = {};
+        // row data is an object
+        $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
+          $(this).find('td').each(function() {
+            if (this.cellIndex == 5) {
+              // this is pointing to daysleft column
+              // deadline column update daysLeftColumn
+              this.innerText = driver.getTimeLeft(this.previousSibling.value);
+              driver.updateStatus(this.parentNode.firstChild, this.innerText);
+            }
+
+            if (this.hasAttribute("contenteditable")) {
+              colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
+              switch (colName){
+                case "Order#":
+                  headerText="order_num";
+                  data = this.innerText;
+                  break;
+                case "Name": 
+                  headerText="name";   
+                  data = this.innerText; 
+                  break;
+                case "Address": 
+                  headerText="address"; 
+                  data = this.innerText; 
+                  break;
+                case "Items": 
+                  headerText="items";  
+                  data = this.innerText; 
+                  break;
+                // default:
+              }
+
+
+              dataToSend[headerText] = data;
+            }
+
+          deadlineCol = $('#ordersTable').find('input').val();
+            if (deadlineCol){
+              headerText = "deadline";
+              data = deadlineCol;
+
+              dataToSend[headerText] = data;
+            }
+          });// each td find contenteditable
+        }); // find row of the event happens
+
+        // console.log(dataToSend);
+
+        var ordersRef = new Firebase(addr.orders + entry_key);
+        ordersRef.update(dataToSend);
+
+        // change style
+        e.target.parentElement.parentElement.style.backgroundColor = "";
+        // change arianas stupid input thing 
+        tdArr = e.target.parentElement.parentElement.children;
+        for (i in tdArr){
+          if (tdArr[i].getAttribute){
+            if (tdArr[i].getAttribute("celltype")=="deadline"){
+              tdArr[i].style.backgroundColor = "";
+            }            
+          }
+        }
+        break;
+    }
+  },
+  
+  addEmptyItem: function(e){
+    // add empty item
+    var ordersRef = new Firebase(addr.orders);
+    ordersRef.push({
+      "order_num":  "",
+      "name":       "",
+      "address":    "",
+      "items":      "",
+      "deadline":   "",
+    });
+    // make sure it's loaded from firebase back to page
+    // load("orders");
+    // call driver.editEntry with the new item
+  },
+
+  reload: function(id){
+
+    loadFirebase(id);
+  },
+
+  selectAll: function(e){
+    alert("hah you too");
+  },
+
+  deleteEntry: function(e){
+    switch (e.target.innerHTML){
+      case "":
+        entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+        var remRef = new Firebase(addr.orders + entry_key);
+        remRef.remove();
+        break
+      case "cancel":
+        domToReplace = e.target.parentElement.parentElement;
+        domToReplace.parentElement.insertBefore(tempEntry, domToReplace);
+        domToReplace.parentElement.removeChild(domToReplace);
+        break
+    }
+  },
+}
+
+// global refs
+addr = {
+  orders: "https://square1.firebaseio.com/orders/",
 }
