@@ -129,8 +129,6 @@ function loadFirebase(id){
       // clear the table in case there's anything there
       // get firebase stuff
       var ordersRef = new Firebase(addr.orders);
-      // prepare plugin
-      var oTableNotYetCalled = true;
 
       makeTable = function(snapshot) {
         document.getElementById("ordersTable-body").innerHTML = "";
@@ -144,6 +142,7 @@ function loadFirebase(id){
           // first create the status column with defult color circle 
           var col_status = row.insertCell(colIndex++);
           col_status.innerHTML = '<div class ="foo orange"></div>'
+
           col_status.setAttribute("class", "firstcol")
 
           // insert following data 
@@ -187,27 +186,6 @@ function loadFirebase(id){
           // update
           driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-
-        // delete the datatable
-        if (oTableNotYetCalled) {   
-          oTableNotYetCalled = false;
-          var oTable = $('#ordersTable').DataTable({
-            "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
-            // "order": [[6, 'asc']],
-            // "columnDefs": [
-            //     {"targets": [0,7], "orderable": false}
-            //   ],
-            // "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
-            //         '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
-            // "pagingType": "full_numbers",
-            "bAutoWidth" : false,
-            // "scrollX": true,
-            // "scrollY": true,
-            "initComplete" : function () {
-              $('.dataTables_scrollBody thead tr').addClass('hidden');
-            },
-          });   // otable configuration          
-        }
       }
       // if anything happens, reload
       ordersRef.on("value", makeTable);
@@ -388,7 +366,7 @@ driver = {
       col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
     }
     else {
-      col_status.innerHTML = '<div class ="foo orange"></div>';
+      col_status.innerHTML = '<div id ="orangeFilledCircle"></div>';
     }
   },
 
@@ -409,11 +387,10 @@ driver = {
 
   editEntry: function(e){
     tempEntry = e.target.parentElement.parentElement.cloneNode(true);
-    switch (e.target.innerHTML){
-      case "":
+    switch (e.target.getAttribute("class")){
+      case "glyphicon glyphicon-edit btn-sm":
         // uneditable -> editable
-        // change style
-        e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
+
         // console.log("testing");
         // make editable
         tdArr = e.target.parentElement.parentElement.children;
@@ -449,6 +426,7 @@ driver = {
               var div = document.createElement('div');
               div.innerHTML = s;
               var newDom = div.childNodes[0];
+              newDom.style.backgroundColor = "#ffd480";
 
               // replace old dom
               domToReplace = tdArr[i];
@@ -460,28 +438,20 @@ driver = {
         }
           
         // change button
-        e.target.setAttribute("class", "");
-        e.target.innerHTML = "submit";
-
-        // // change deadline to input tag with date type 
-        // entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
-        // var $c = $("#ordersTable-body").find('tr:eq('+ entry_rowIndex + ') td:eq(5)'); // get the deadline column
-        // $c.replaceWith('<input type="date" style="height:100% !important; width:100% !important">');
-
-
-
+        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm");
         // change cancel button too
-        e.target.parentElement.lastChild.setAttribute("class", "");
-        e.target.parentElement.lastChild.innerHTML = "cancel";
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+
+        // change style
+        e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
 
         break;
 
-      case "submit":
+      case "glyphicon glyphicon-ok btn-sm":
         // editable -> uneditable
         // send to firebase
         // reload
-        // change style
-        e.target.parentElement.parentElement.style.backgroundColor = "";
+
         // console.log("testing");
         // make uneditable
         tdArr = e.target.parentElement.parentElement.children;
@@ -492,9 +462,7 @@ driver = {
         }
         // change button
         e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
-        e.target.innerHTML = "";
         e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
-        e.target.parentElement.lastChild.innerHTML = "";
 
         // send to firebase 
         entry_key = e.target.parentNode.parentNode.lastChild.innerText;
@@ -513,7 +481,7 @@ driver = {
             }
 
             if (this.hasAttribute("contenteditable")) {
-              colName = $('#ordersTable').find('th').eq(this.cellIndex - 1).text().trim();
+              colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
               switch (colName){
                 case "Order#":
                   headerText="order_num";
@@ -531,13 +499,17 @@ driver = {
                   headerText="items";  
                   data = this.innerText; 
                   break;
-                default:
-                  deadlineCol = $('#ordersTable').find('input').val();
-                  if (deadlineCol){
-                    headerText = "deadline";
-                    data = deadlineCol;
-                  }
+                // default:
               }
+
+
+              dataToSend[headerText] = data;
+            }
+
+          deadlineCol = $('#ordersTable').find('input').val();
+            if (deadlineCol){
+              headerText = "deadline";
+              data = deadlineCol;
 
               dataToSend[headerText] = data;
             }
@@ -548,6 +520,18 @@ driver = {
 
         var ordersRef = new Firebase(addr.orders + entry_key);
         ordersRef.update(dataToSend);
+
+        // change style
+        e.target.parentElement.parentElement.style.backgroundColor = "";
+        // change arianas stupid input thing 
+        tdArr = e.target.parentElement.parentElement.children;
+        for (i in tdArr){
+          if (tdArr[i].getAttribute){
+            if (tdArr[i].getAttribute("celltype")=="deadline"){
+              tdArr[i].style.backgroundColor = "";
+            }            
+          }
+        }
         break;
     }
   },
