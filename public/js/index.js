@@ -149,7 +149,7 @@ function loadFirebase(id){
           // insert following data 
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
-          col_order_num.setAttribute("convertenteditable", false);
+          col_order_num.setAttribute("contenteditable", false);
           col_order_num.setAttribute("celltype", "order_num");
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
@@ -423,30 +423,40 @@ driver = {
           }
           switch (tdArr[i].getAttribute("celltype")){ 
             case "order_num":
-              tdArr[i].innerHTML = '<strong>##</strong>';
-              tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = '<strong>##</strong>';
+                tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+              }
               break
             case "name":
-              tdArr[i].innerHTML = "<strong>first last</strong>";
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>first last</strong>";
+              }
               break
             case "address":
-              tdArr[i].innerHTML = "<strong>address</strong>";
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>address</strong>";
+              }
               break
             case "item":
-              tdArr[i].innerHTML = "<strong>item name</strong>";
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>item name</strong>";
+              }
               break
             case "deadline":
-              // make input dom
-              var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'; // HTML string
-              var div = document.createElement('div');
-              div.innerHTML = s;
-              var newDom = div.childNodes[0];
+              if (tdArr[i]==""){
+                // make input dom
+                var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'; // HTML string
+                var div = document.createElement('div');
+                div.innerHTML = s;
+                var newDom = div.childNodes[0];
 
-              // replace old dom
-              domToReplace = tdArr[i];
-              domToReplace.parentElement.insertBefore(newDom, domToReplace);
-              domToReplace.parentElement.removeChild(domToReplace);
-              tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+                // replace old dom
+                domToReplace = tdArr[i];
+                domToReplace.parentElement.insertBefore(newDom, domToReplace);
+                domToReplace.parentElement.removeChild(domToReplace);
+                tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+              }
               break 
           }
         }
