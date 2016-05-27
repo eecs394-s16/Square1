@@ -47,8 +47,6 @@ function load(id) {
     default:
       console.log("got bad load id");
   }
-
-
 }
 
 // firebase stuff ------------------------------------------------------------------------------------
@@ -134,10 +132,6 @@ function loadFirebase(id){
       // prepare plugin
       var oTableNotYetCalled = true;
 
-      ordersRef.on("value", makeTable);
-      ordersRef.on("child_added", makeTable);
-      ordersRef.on("child_changed", makeTable);
-      ordersRef.on("child_removed", makeTable);
       makeTable = function(snapshot) {
         document.getElementById("ordersTable-body").innerHTML = "";
         var table = document.getElementById("ordersTable-body");
@@ -155,7 +149,7 @@ function loadFirebase(id){
           // insert following data 
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
-          col_order_num.setAttribute("contenteditable", false);
+          col_order_num.setAttribute("convertenteditable", false);
           col_order_num.setAttribute("celltype", "order_num");
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
@@ -215,7 +209,11 @@ function loadFirebase(id){
           });   // otable configuration          
         }
       }
-
+      // if anything happens, reload
+      ordersRef.on("value", makeTable);
+      ordersRef.on("child_added", makeTable);
+      ordersRef.on("child_changed", makeTable);
+      ordersRef.on("child_removed", makeTable);
       break;
           
           
@@ -438,17 +436,36 @@ driver = {
               tdArr[i].innerHTML = "<strong>item name</strong>";
               break
             case "deadline":
+              // make input dom
+              var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'; // HTML string
+              var div = document.createElement('div');
+              div.innerHTML = s;
+              var newDom = div.childNodes[0];
+
+              // replace old dom
+              domToReplace = tdArr[i];
+              domToReplace.parentElement.insertBefore(newDom, domToReplace);
+              domToReplace.parentElement.removeChild(domToReplace);
               tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
-              break
+              break 
           }
         }
           
         // change button
         e.target.setAttribute("class", "");
         e.target.innerHTML = "submit";
+
+        // // change deadline to input tag with date type 
+        // entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
+        // var $c = $("#ordersTable-body").find('tr:eq('+ entry_rowIndex + ') td:eq(5)'); // get the deadline column
+        // $c.replaceWith('<input type="date" style="height:100% !important; width:100% !important">');
+
+
+
         // change cancel button too
         e.target.parentElement.lastChild.setAttribute("class", "");
         e.target.parentElement.lastChild.innerHTML = "cancel";
+
         break;
 
       case "submit":
@@ -473,42 +490,46 @@ driver = {
 
         // send to firebase 
         entry_key = e.target.parentNode.parentNode.lastChild.innerText;
-        entry_rowIndex = e.target.parentNode.parentNode._DT_RowIndex;  // Index starts 0
+        entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
 
         // get all data with false contenteditable
         dataToSend = {};
         // row data is an object
         $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
           $(this).find('td').each(function() {
-
             if (this.cellIndex == 5) {
+              // this is pointing to daysleft column
               // deadline column update daysLeftColumn
-              this.nextSibling.innerText = driver.getTimeLeft(this.innerText);
-
-              driver.updateStatus(this.parentNode.firstChild, this.nextSibling.innerText);
+              this.innerText = driver.getTimeLeft(this.previousSibling.value);
+              driver.updateStatus(this.parentNode.firstChild, this.innerText);
             }
 
             if (this.hasAttribute("contenteditable")) {
-              headerText = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
-              switch (headerText){
+              colName = $('#ordersTable').find('th').eq(this.cellIndex - 1).text().trim();
+              switch (colName){
                 case "Order#":
                   headerText="order_num";
+                  data = this.innerText;
                   break;
                 case "Name": 
-                  headerText="name";    
+                  headerText="name";   
+                  data = this.innerText; 
                   break;
                 case "Address": 
                   headerText="address"; 
+                  data = this.innerText; 
                   break;
                 case "Items": 
-                  headerText="items";   
+                  headerText="items";  
+                  data = this.innerText; 
                   break;
-                case "Deadline":
-                  headerText="deadline";
-                  break;
+                default:
+                  deadlineCol = $('#ordersTable').find('input').val();
+                  if (deadlineCol){
+                    headerText = "deadline";
+                    data = deadlineCol;
+                  }
               }
-
-              data = this.innerText;
 
               dataToSend[headerText] = data;
             }
