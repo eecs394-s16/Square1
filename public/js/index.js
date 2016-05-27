@@ -163,7 +163,7 @@ function loadFirebase(id){
           var sortColindex = colIndex;
           var col_dayLeft = row.insertCell(colIndex++);
           col_dayLeft.setAttribute("style", "font-weight:bold");
-          var daysLeft = getTimeLeft(newItem.deadline);
+          var daysLeft = driver.getTimeLeft(newItem.deadline);
           col_dayLeft.innerHTML = daysLeft;
 
           // edit
@@ -176,20 +176,21 @@ function loadFirebase(id){
 
           // according to daysleft to change the color of the circle in status columns
           // but without completion check 
-          if (daysLeft == 0 ) {
-            col_status.innerHTML = '<div id = "redFilledCircle"></div>';
+          // if (daysLeft == 0 ) {
+          //   col_status.innerHTML = '<div id = "redFilledCircle"></div>';
 
-            // to do check whether complete or not ------------------------
-          }
-          else if (daysLeft <= 7){
-            col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
-          }
-          else if (daysLeft > 7){
-            col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
-          }
-          else {
-            col_status.innerHTML = '<div class ="foo orange"></div>';
-          }
+          //   // to do check whether complete or not ------------------------
+          // }
+          // else if (daysLeft <= 7){
+          //   col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
+          // }
+          // else if (daysLeft > 7){
+          //   col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
+          // }
+          // else {
+          //   col_status.innerHTML = '<div class ="foo orange"></div>';
+          // }
+          driver.updateStatus(col_status,daysLeft);
           // 
         }); // FOR EACH
 
@@ -208,7 +209,7 @@ function loadFirebase(id){
           "initComplete" : function () {
             $('.dataTables_scrollBody thead tr').addClass('hidden');
           },
-        });  
+        });   // otable configuration
 
         // driver for editing datatable
         // var changeDataHashTable = [];
@@ -264,39 +265,39 @@ function loadFirebase(id){
         //   return '<h4> Need more details for ' + d[2] + ' ! </h4>';
         // }
 
-        // Add event listener for opening and closing details
-        $('#ordersTable-body').on('click', 'td .btn', function () {
-          var tr = $(this).closest('tr');
-          var row = oTable.row(tr);
+        // // Add event listener for opening and closing details
+        // $('#ordersTable-body').on('click', 'td .btn', function () {
+        //   var tr = $(this).closest('tr');
+        //   var row = oTable.row(tr);
    
-          if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-          }
-          else {
-            // Open this row
-            row.child(details(row.data())).show();
-            tr.addClass('shown');
-          }
-        });
+        //   if ( row.child.isShown() ) {
+        //     // This row is already open - close it
+        //     row.child.hide();
+        //     tr.removeClass('shown');
+        //   }
+        //   else {
+        //     // Open this row
+        //     row.child(details(row.data())).show();
+        //     tr.addClass('shown');
+        //   }
+        // });
       });  //end orderRef.once  
 
       //----------------------------function -------------------------------
 
-      function getTimeLeft(deadline){
-        var dateObj = new Date(deadline);  // convert string to date object 
+      // function getTimeLeft(deadline){
+      //   var dateObj = new Date(deadline);  // convert string to date object 
 
-        var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-        var firstDate = dateObj;
-        var secondDate = new Date();
+      //   var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+      //   var firstDate = dateObj;
+      //   var secondDate = new Date();
 
-        var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
-        if (diffDays <= 0)
-          diffDays = 0;
+      //   var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
+      //   if (diffDays <= 0)
+      //     diffDays = 0;
 
-        return diffDays;
-      }
+      //   return diffDays;
+      // }  // getTimeLeft
 
       break;
           
@@ -459,13 +460,43 @@ function bottleneckLogic(){
 
 // global object of drivers
 driver = {
+  updateStatus: function(col_status, daysLeft) {
+    if (daysLeft == 0 ) {
+      col_status.innerHTML = '<div id = "redFilledCircle"></div>';
+
+    // to do check whether complete or not ------------------------
+    }
+    else if (daysLeft <= 7){
+      col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
+    }
+    else if (daysLeft > 7){
+      col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
+    }
+    else {
+      col_status.innerHTML = '<div class ="foo orange"></div>';
+    }
+  },
+
+  getTimeLeft: function(deadline){
+    var dateObj = new Date(deadline);  // convert string to date object 
+
+    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    var firstDate = dateObj;
+    var secondDate = new Date();
+
+    var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
+    if (diffDays <= 0)
+      diffDays = 0;
+    return diffDays;
+  },  // getTimeLeft
+
   editEntry: function(e){
     switch (e.target.innerHTML){
       case "":
         // uneditable -> editable
         // change style
         e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
-        console.log("testing");
+        // console.log("testing");
         // make editable
         tdArr = e.target.parentElement.parentElement.children;
         for (var i=0; i<tdArr.length; i++){
@@ -478,14 +509,15 @@ driver = {
         e.target.setAttribute("class", "");
         e.target.innerHTML = "submit";
         break;
+
       case "submit":
         // editable -> uneditable
         // send to firebase
         // reload
         // change style
         e.target.parentElement.parentElement.style.backgroundColor = "";
-        console.log("testing");
-        // make editable
+        // console.log("testing");
+        // make uneditable
         tdArr = e.target.parentElement.parentElement.children;
         for (var i=0; i<tdArr.length; i++){
           if (tdArr[i].getAttribute("contenteditable") != null){
@@ -495,9 +527,59 @@ driver = {
         // change button
         e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
         e.target.innerHTML = "";
+
+        // send to firebase 
+        entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+        entry_rowIndex = e.target.parentNode.parentNode._DT_RowIndex;  // Index starts 0
+
+        // get all data with false contenteditable
+        dataToSend = {};
+        // row data is an object
+        $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
+          $(this).find('td').each(function() {
+
+            if (this.cellIndex == 5) {
+              // deadline column update daysLeftColumn
+              this.nextSibling.innerText = driver.getTimeLeft(this.innerText);
+
+              driver.updateStatus(this.parentNode.firstChild, this.nextSibling.innerText);
+            }
+
+            if (this.hasAttribute("contenteditable")) {
+              headerText = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
+              switch (headerText){
+                case "Order#":
+                  headerText="order_num";
+                  break;
+                case "Name": 
+                  headerText="name";    
+                  break;
+                case "Address": 
+                  headerText="address"; 
+                  break;
+                case "Items": 
+                  headerText="items";   
+                  break;
+                case "Deadline":
+                  headerText="deadline";
+                  break;
+              }
+
+              data = this.innerText;
+
+              dataToSend[headerText] = data;
+            }
+          });// each td find contenteditable
+        }); // find row of the event happens
+
+        // console.log(dataToSend);
+
+        var ordersRef = new Firebase(addr.orders + entry_key);
+        ordersRef.update(dataToSend);
         break;
     }
   },
+  
   addEmptyItem: function(e){
     // add empty item
     var ordersRef = new Firebase(addr.orders);
@@ -509,12 +591,12 @@ driver = {
       "deadline":   "",
     });
     // make sure it's loaded from firebase back to page
-    load("orders");
+    // load("orders");
     // call driver.editEntry with the new item
   },
 }
 
 // global refs
 addr = {
-  orders: "https://square1.firebaseio.com/orders",
+  orders: "https://square1.firebaseio.com/orders/",
 }
