@@ -150,7 +150,7 @@ function loadFirebase(id){
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
           col_order_num.setAttribute("contenteditable", false);
-          col_order_num.setAttribute("celltype", "order_num");
+          col_order_num.setAttribute("celltype", "order_num");  
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
           col_name.setAttribute("contenteditable", false);
@@ -444,19 +444,17 @@ driver = {
               }
               break
             case "deadline":
-              if (tdArr[i]==""){
-                // make input dom
-                var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'; // HTML string
-                var div = document.createElement('div');
-                div.innerHTML = s;
-                var newDom = div.childNodes[0];
+              // make input dom
+              var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'+tdArr[i].html+'</input>'; // HTML string
+              var div = document.createElement('div');
+              div.innerHTML = s;
+              var newDom = div.childNodes[0];
 
-                // replace old dom
-                domToReplace = tdArr[i];
-                domToReplace.parentElement.insertBefore(newDom, domToReplace);
-                domToReplace.parentElement.removeChild(domToReplace);
-                tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
-              }
+              // replace old dom
+              domToReplace = tdArr[i];
+              domToReplace.parentElement.insertBefore(newDom, domToReplace);
+              domToReplace.parentElement.removeChild(domToReplace);
+              tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
               break 
           }
         }
