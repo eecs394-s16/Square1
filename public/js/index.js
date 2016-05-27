@@ -128,8 +128,18 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       // orders
       // -------------------------------------------------------------------------
+      // clear the table in case there's anything there
+      // get firebase stuff
       var ordersRef = new Firebase(addr.orders);
-      ordersRef.once("value", function(snapshot) {
+      // prepare plugin
+      var oTableNotYetCalled = true;
+
+      ordersRef.on("value", makeTable);
+      ordersRef.on("child_added", makeTable);
+      ordersRef.on("child_changed", makeTable);
+      ordersRef.on("child_removed", makeTable);
+      makeTable = function(snapshot) {
+        document.getElementById("ordersTable-body").innerHTML = "";
         var table = document.getElementById("ordersTable-body");
 
         snapshot.forEach(function(data) {
@@ -146,18 +156,24 @@ function loadFirebase(id){
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
           col_order_num.setAttribute("contenteditable", false);
+          col_order_num.setAttribute("celltype", "order_num");
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
           col_name.setAttribute("contenteditable", false);
+          col_name.setAttribute("celltype", "name");
           var col_address = row.insertCell(colIndex++);
           col_address.innerHTML = newItem.address;
           col_address.setAttribute("contenteditable", false);
+          col_address.setAttribute("celltype", "address");
           var col_items = row.insertCell(colIndex++);
           col_items.innerHTML = newItem.items;
           col_items.setAttribute("contenteditable", false);
+          col_items.setAttribute("celltype", "item");
           var col_deadline = row.insertCell(colIndex++);
           col_deadline.innerHTML = newItem.deadline;
           col_deadline.setAttribute("contenteditable", false);
+          col_deadline.setAttribute("celltype", "deadline");
+
 
           // calculate the days left 
           var sortColindex = colIndex;
@@ -167,137 +183,38 @@ function loadFirebase(id){
           col_dayLeft.innerHTML = daysLeft;
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" onclick="driver.editEntry(event)"></button>'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
           hidden_key.innerHTML = data.key();
           hidden_key.style.display='none';
 
-          // according to daysleft to change the color of the circle in status columns
-          // but without completion check 
-          // if (daysLeft == 0 ) {
-          //   col_status.innerHTML = '<div id = "redFilledCircle"></div>';
-
-          //   // to do check whether complete or not ------------------------
-          // }
-          // else if (daysLeft <= 7){
-          //   col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
-          // }
-          // else if (daysLeft > 7){
-          //   col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
-          // }
-          // else {
-          //   col_status.innerHTML = '<div class ="foo orange"></div>';
-          // }
+          // update
           driver.updateStatus(col_status,daysLeft);
-          // 
         }); // FOR EACH
 
-        var oTable = $('#ordersTable').DataTable({
-          "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
-          // "order": [[6, 'asc']],
-          // "columnDefs": [
-          //     {"targets": [0,7], "orderable": false}
-          //   ],
-          // "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
-          //         '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
-          // "pagingType": "full_numbers",
-          "bAutoWidth" : false,
-          // "scrollX": true,
-          // "scrollY": true,
-          "initComplete" : function () {
-            $('.dataTables_scrollBody thead tr').addClass('hidden');
-          },
-        });   // otable configuration
-
-        // driver for editing datatable
-        // var changeDataHashTable = [];
-        // var editableArray = document.querySelector('#ordersTable');
-        // editableArray.addEventListener('keydown', function(e){
-        //   if (e.code=="Enter"){
-        //     // enter key is pressed, send data
-        //     // get text, index, index name, and firebase ID
-        //     var newData = e.target.innerText;
-        //     var FBKey = e.target.parentNode.lastChild.innerText;
-        //     var IndexCol = e.target.cellIndex;
-        //     var firebaseCol = document.querySelectorAll('#ordersTable thead tr th')[IndexCol].innerText;
-        //     switch (firebaseCol){
-        //       case "Order#":
-        //         firebaseCol="order_num";
-        //         break;
-        //       case "Name": 
-        //         firebaseCol="name";    
-        //         break;
-        //       case "Address": 
-        //         firebaseCol="address"; 
-        //         break;
-        //       case "Items": 
-        //         firebaseCol="items";   
-        //         break;
-        //       case "Deadline":
-        //         firebaseCol="deadline";
-        //         break;
-        //     }
-        //     // send query
-        //     // create the object to send
-        //     objToSend = {};
-        //     objToSend[firebaseCol] = newData;
-        //     new Firebase('https://square1.firebaseio.com/orders/'+ FBKey).update(objToSend);
-        //     //move focus down
-        //     try {
-        //       // down
-        //       e.target.parentNode.nextSibling.children[IndexCol].focus();
-        //     }
-        //     catch(err) {
-        //       // can't move down
-        //       e.target.blur();
-        //     }
-        //   }  // if (enter)
-        // }, false);  // keydown eventlistener
-
-        // editable stuff
-        // when a cell loses focus, edit it/send to firebase
-        // $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
-
-        // show more details--------------------------------------------------------
-        // function details(d){
-        //   return '<h4> Need more details for ' + d[2] + ' ! </h4>';
-        // }
-
-        // // Add event listener for opening and closing details
-        // $('#ordersTable-body').on('click', 'td .btn', function () {
-        //   var tr = $(this).closest('tr');
-        //   var row = oTable.row(tr);
-   
-        //   if ( row.child.isShown() ) {
-        //     // This row is already open - close it
-        //     row.child.hide();
-        //     tr.removeClass('shown');
-        //   }
-        //   else {
-        //     // Open this row
-        //     row.child(details(row.data())).show();
-        //     tr.addClass('shown');
-        //   }
-        // });
-      });  //end orderRef.once  
-
-      //----------------------------function -------------------------------
-
-      // function getTimeLeft(deadline){
-      //   var dateObj = new Date(deadline);  // convert string to date object 
-
-      //   var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-      //   var firstDate = dateObj;
-      //   var secondDate = new Date();
-
-      //   var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
-      //   if (diffDays <= 0)
-      //     diffDays = 0;
-
-      //   return diffDays;
-      // }  // getTimeLeft
+        // delete the datatable
+        if (oTableNotYetCalled) {   
+          oTableNotYetCalled = false;
+          var oTable = $('#ordersTable').DataTable({
+            "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
+            // "order": [[6, 'asc']],
+            // "columnDefs": [
+            //     {"targets": [0,7], "orderable": false}
+            //   ],
+            // "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
+            //         '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
+            // "pagingType": "full_numbers",
+            "bAutoWidth" : false,
+            // "scrollX": true,
+            // "scrollY": true,
+            "initComplete" : function () {
+              $('.dataTables_scrollBody thead tr').addClass('hidden');
+            },
+          });   // otable configuration          
+        }
+      }
 
       break;
           
@@ -409,7 +326,7 @@ function loadFirebase(id){
   }
 }
 
-// run bottleneck logic here, called from loadfirebase() in the dash case of that switch
+// run bottleneck logic here, called from loadFirebase() in the dash case of that switch
 function bottleneckLogic(){
   // bottleneck code here!
   // load all relevant firebase refs, iterate through to detect "bottlenecks"
@@ -458,7 +375,7 @@ function bottleneckLogic(){
   }
 }
 
-// global object of drivers
+// global object of driver
 driver = {
   updateStatus: function(col_status, daysLeft) {
     if (daysLeft == 0 ) {
@@ -490,7 +407,10 @@ driver = {
     return diffDays;
   },  // getTimeLeft
 
+  tempEntry: "",
+
   editEntry: function(e){
+    tempEntry = e.target.parentElement.parentElement.cloneNode(true);
     switch (e.target.innerHTML){
       case "":
         // uneditable -> editable
@@ -503,11 +423,32 @@ driver = {
           if (tdArr[i].getAttribute("contenteditable") != null){
             tdArr[i].setAttribute("contenteditable", true);
           }
+          switch (tdArr[i].getAttribute("celltype")){ 
+            case "order_num":
+              tdArr[i].innerHTML = '<strong>##</strong>';
+              tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+              break
+            case "name":
+              tdArr[i].innerHTML = "<strong>first last</strong>";
+              break
+            case "address":
+              tdArr[i].innerHTML = "<strong>address</strong>";
+              break
+            case "item":
+              tdArr[i].innerHTML = "<strong>item name</strong>";
+              break
+            case "deadline":
+              tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+              break
+          }
         }
           
         // change button
         e.target.setAttribute("class", "");
         e.target.innerHTML = "submit";
+        // change cancel button too
+        e.target.parentElement.lastChild.setAttribute("class", "");
+        e.target.parentElement.lastChild.innerHTML = "cancel";
         break;
 
       case "submit":
@@ -527,6 +468,8 @@ driver = {
         // change button
         e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
         e.target.innerHTML = "";
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+        e.target.parentElement.lastChild.innerHTML = "";
 
         // send to firebase 
         entry_key = e.target.parentNode.parentNode.lastChild.innerText;
@@ -593,6 +536,30 @@ driver = {
     // make sure it's loaded from firebase back to page
     // load("orders");
     // call driver.editEntry with the new item
+  },
+
+  reload: function(id){
+
+    loadFirebase(id);
+  },
+
+  selectAll: function(e){
+    alert("hah you too");
+  },
+
+  deleteEntry: function(e){
+    switch (e.target.innerHTML){
+      case "":
+        entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+        var remRef = new Firebase(addr.orders + entry_key);
+        remRef.remove();
+        break
+      case "cancel":
+        domToReplace = e.target.parentElement.parentElement;
+        domToReplace.parentElement.insertBefore(tempEntry, domToReplace);
+        domToReplace.parentElement.removeChild(domToReplace);
+        break
+    }
   },
 }
 
