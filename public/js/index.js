@@ -1,5 +1,22 @@
 // ui stuff ------------------------------------------------------------------------------------
 
+// globalref for user authentication
+var globalref = new Firebase('https://square1.firebaseio.com');
+// Register the callback to be fired every time auth state changes
+globalref.onAuth(authDataCallback);
+// Create a callback which logs the current auth state
+function authDataCallback(authData) {
+  if (authData) {
+    // logged in, already in index so stay here
+  }
+  else {
+    // not logged in, go to splash to log in
+    window.location = "splash.html";
+  }
+}
+// also check manually at page load
+authDataCallback(globalref.getAuth());
+
 // onload, load in the dashboard
 $( document ).ready(function() {
   // load("orders");
@@ -679,6 +696,10 @@ driver = {
         domToReplace.parentElement.removeChild(domToReplace);
         break
     }
+  },
+
+  logout: function(e){
+    globalref.unauth();
   },
 }
 
