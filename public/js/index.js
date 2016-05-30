@@ -16,6 +16,7 @@ function authDataCallback(authData) {
     // logged in, already in index so stay here
     // get uid
     UID = authData.uid;
+    load("dash");
   }
   else {
     // not logged in, go to splash to log in
@@ -25,11 +26,11 @@ function authDataCallback(authData) {
 // also check manually at page load
 authDataCallback(globalref.getAuth());
 
-// onload, load in the dashboard
-$( document ).ready(function() {
-  // load("orders");
-  load("dash");
-});
+// // onload, load in the dashboard
+// $( document ).ready(function() {
+//   // load("orders");
+//   load("dash");
+// });
 
 // loads pages by redrawing page-wrapper DOM
 function load(id) {
@@ -633,7 +634,7 @@ driver = {
 
         // console.log(dataToSend);
 
-        var ordersRef = new Firebase(addr.orders + entry_key);
+        var ordersRef = new Firebase(addr("orders") + entry_key);
         ordersRef.update(dataToSend);
 
         // change style
@@ -653,7 +654,7 @@ driver = {
   
   addEmptyItem: function(e){
     // add empty item
-    var ordersRef = new Firebase(addr.orders);
+    var ordersRef = new Firebase(addr("orders"));
     ordersRef.push({
       "order_num":  "",
       "name":       "",
@@ -679,7 +680,7 @@ driver = {
     switch (e.target.innerHTML){
       case "":
         entry_key = e.target.parentNode.parentNode.lastChild.innerText;
-        var remRef = new Firebase(addr.orders + entry_key);
+        var remRef = new Firebase(addr("orders") + entry_key);
         remRef.remove();
         break
       case "cancel":

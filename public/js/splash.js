@@ -12,6 +12,7 @@ globalref.onAuth(authDataCallback);
 function authDataCallback(authData) {
 	if (authData) {
 		// logged in, redirect to dashboard
+		window.name.uid = authData.uid;
 		window.location = "index.html";
 	}
 	else {
