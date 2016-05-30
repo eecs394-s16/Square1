@@ -68,8 +68,10 @@ function loadFirebase(id){
 
       var bottleneck =false;
       var status = "foo green";
-
+      
+    
       inventoryRef.on("value", function(snapshot) {
+        $("#dataTable tr").remove(); //Clear table to prevent duplicates appending
         var table = document.getElementById("dataTable");
         snapshot.forEach(function(data) {
           var newItem = data.val();
@@ -124,24 +126,32 @@ function loadFirebase(id){
           cell3.innerHTML = newItem.Sourcing.ReorderLevel;
           cell4.innerHTML = newItem.Sourcing.Cost;
           cell5.innerHTML = newItem.Sourcing.Location;
-          cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
-          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
-          
-      //          document.getElementById("edit_button").onclick=editRow;
-          document.getElementById("remove_button").onclick = deleteRow;
+//          cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
+          cell6.innerHTML =newItem.Sourcing.Link;
+
 
             
+            
+
+          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-trash btn-sm glyphic-red" id="remove_button"></button></div>';
+          
+          document.getElementById("remove_button").onclick = deleteRow;
+
+          //Deletes a row if the remove icon is clicked  
           function deleteRow(){
               removed_tr = $(this).closest('tr').remove();
               var fb_key = $(removed_tr).children('td:last').text();
               inventoryRef.child(fb_key).remove();                        
           }
             
+          //Edits a certain table entry when the edit icon is clicked
           $(document.getElementById("edit_button")).on('click',function() {
 
+              //Highlight row to edit
               var currentRow = $(this).closest('tr');
+              currentRow.css('background-color','#a8cb17');
               var currentTD = currentRow.children('td');
-              for (var i=1; i<currentTD.length-3; ++i){
+              for (var i=1; i<currentTD.length-2; ++i){
                   currentTD[i].setAttribute('contenteditable',true);
               }
     
@@ -151,7 +161,9 @@ function loadFirebase(id){
                       currentTD[i].innerHTML='<button class ="glyphicon glyphicon-ok btn-sm glyphic-green" id="edit_confirm"></button>';
                       document.getElementById("edit_confirm").onclick =confirmEdit;
                       function confirmEdit(){
-                          currentTD[7].innerHTML ='<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
+                          var currRow =$(this).closest('tr');
+                          currRow.css('background-color','#FFFFFF');
+                          currentTD[7].innerHTML ='<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-trash btn-sm glyphic-red" id="remove_button"></button></div>';
                           for(var i=0; i<currentTD.length;++i){
                               currentTD[i].setAttribute('contenteditable',false);
                               var fb_key = currentRow.children('td:last').text();
@@ -161,7 +173,8 @@ function loadFirebase(id){
                                       "Cost":currentTD[4].innerHTML,
                                       "Quantity":currentTD[2].innerHTML,
                                       "ReorderLevel":currentTD[3].innerHTML,
-                                      "Location":currentTD[5].innerHTML
+                                      "Location":currentTD[5].innerHTML,
+                                      "Link":currentTD[6].innerHTML
                                   }
                               })
                           }
@@ -195,6 +208,7 @@ function loadFirebase(id){
                 
             })
             
+            document.getElementById("new_inventory_entry").style.display='none';
         }
       }
       
