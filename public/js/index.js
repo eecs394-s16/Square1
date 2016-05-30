@@ -1,13 +1,21 @@
 // ui stuff ------------------------------------------------------------------------------------
 
+// refs
+addr = function(feature){
+  return "https://square1.firebaseio.com/" + String(UID) + "/" + feature + "/";
+}
+
 // globalref for user authentication
-var globalref = new Firebase('https://square1.firebaseio.com');
+var globalref = new Firebase("https://square1.firebaseio.com/");
 // Register the callback to be fired every time auth state changes
 globalref.onAuth(authDataCallback);
 // Create a callback which logs the current auth state
+var UID = -1;
 function authDataCallback(authData) {
   if (authData) {
     // logged in, already in index so stay here
+    // get uid
+    UID = authData.uid;
   }
   else {
     // not logged in, go to splash to log in
@@ -81,7 +89,7 @@ function loadFirebase(id){
       bottleneckLogic();
       break;
     case "inventory":
-      var inventoryRef = new Firebase('https://square1.firebaseio.com/inventory');
+      var inventoryRef = new Firebase(addr("inventory"));
 
       var bottleneck =false;
       var status = "foo green";
@@ -214,22 +222,6 @@ function loadFirebase(id){
             
         }
       }
-      
-
-
-//      var addFirebase = document.getElementById("add_to_firebase");
-//      addFirebase.onclick = function(){
-//        inventoryRef.push({
-//          Part:document.getElementById("part_input").value,
-//          Sourcing: {
-//            "Cost":         document.getElementById("cost_input").value,
-//            "Quantity":     document.getElementById("quantity_input").value,
-//            "ReorderLevel": document.getElementById("reorder_input").value,
-//            "Location":     document.getElementById("location_input").value,
-//            "Link":         document.getElementById("link_input").value
-//          }
-//        })
-//      }
       break;
     case "orders":
       // -------------------------------------------------------------------------
@@ -237,7 +229,7 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       // clear the table in case there's anything there
       // get firebase stuff
-      var ordersRef = new Firebase(addr.orders);
+      var ordersRef = new Firebase(addr("orders"));
 
       makeTable = function(snapshot) {
         document.getElementById("ordersTable-body").innerHTML = "";
@@ -308,9 +300,9 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       // SHIPPING
       // -------------------------------------------------------------------------
-      var ordersRef = new Firebase('https://square1.firebaseio.com/shipping');
+      var shipRef = new Firebase(addr("shipping"));
 
-      ordersRef.set({
+      shipRef.set({
         "2304" : {
           Order: "2304",
           Name: "John Doe",
@@ -329,7 +321,7 @@ function loadFirebase(id){
         }
       });
 
-      ordersRef.on("value", function(snapshot) {
+      shipRef.on("value", function(snapshot) {
         var table = document.getElementById("ordersTable-body");
         snapshot.forEach(function(data) {
           var newItem = data.val();
@@ -358,7 +350,7 @@ function loadFirebase(id){
       break;
           
       case "tasks":
-          var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
+          var tasksRef = new Firebase(addr("tasks"));
           //              tasksRef.set({
           //                "3001" : {
           //                  Order: "3001",
@@ -433,7 +425,7 @@ function bottleneckLogic(){
   // console.log("go here");
 
   // INVENTORY BOTTLENECK CODE ---------------------------------------------------
-  var itemsRef = new Firebase('https://square1.firebaseio.com/inventory');
+  var itemsRef = new Firebase(addr("inventory"));
   itemsRef.once("value", function(snapshot){
     // table html
     s = '<div class= "table-responsive" style = "textAlign:left">' +
@@ -460,7 +452,7 @@ function bottleneckLogic(){
   });
 
   // orders BOTTLENECK CODE  --------------------------------------------------- 
-  var ordersRef = new Firebase(addr.orders);
+  var ordersRef = new Firebase(addr("orders"));
   // do something
   // modify widget
 
@@ -629,7 +621,7 @@ driver = {
               dataToSend[headerText] = data;
             }
 
-          deadlineCol = $('#ordersTable').find('input').val();
+            deadlineCol = $('#ordersTable').find('input').val();
             if (deadlineCol){
               headerText = "deadline";
               data = deadlineCol;
@@ -671,7 +663,7 @@ driver = {
     });
     // make sure it's loaded from firebase back to page
     // load("orders");
-    // call driver.editEntry with the new item
+    // call driver.editEntry with the new item)
   },
 
   reload: function(id){
@@ -701,9 +693,4 @@ driver = {
   logout: function(e){
     globalref.unauth();
   },
-}
-
-// global refs
-addr = {
-  orders: "https://square1.firebaseio.com/orders/",
 }
