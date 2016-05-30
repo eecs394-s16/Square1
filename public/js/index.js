@@ -83,7 +83,7 @@ function load(id) {
 // call again every time page is drawn (in function "load")
 // read about js switches: http://www.w3schools.com/js/js_switch.asp
 function loadFirebase(id){
-  // only rerun the code for that page being loaded
+  // only return the code for that page being loaded
   switch(id) {
     case "dash":
       // display bottlenecked stuff in widgets
@@ -151,7 +151,7 @@ function loadFirebase(id){
           cell4.innerHTML = newItem.Sourcing.Cost;
           cell5.innerHTML = newItem.Sourcing.Location;
           cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
-          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
+          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue btn-info" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
           
       //          document.getElementById("edit_button").onclick=editRow;
           document.getElementById("remove_button").onclick = deleteRow;
@@ -278,7 +278,7 @@ function loadFirebase(id){
           col_dayLeft.innerHTML = daysLeft;
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm btn-info" onclick="driver.editEntry(event)"></button></button> <button class="glyphicon glyphicon-trash btn-sm btn-danger" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
@@ -291,9 +291,9 @@ function loadFirebase(id){
       }
       // if anything happens, reload
       ordersRef.on("value", makeTable);
-      ordersRef.on("child_added", makeTable);
-      ordersRef.on("child_changed", makeTable);
-      ordersRef.on("child_removed", makeTable);
+      // ordersRef.on("child_added", makeTable);
+      // ordersRef.on("child_changed", makeTable);
+      // ordersRef.on("child_removed", makeTable);
       break;
           
           
@@ -504,7 +504,7 @@ driver = {
   editEntry: function(e){
     tempEntry = e.target.parentElement.parentElement.cloneNode(true);
     switch (e.target.getAttribute("class")){
-      case "glyphicon glyphicon-edit btn-sm":
+      case "glyphicon glyphicon-edit btn-sm btn-info":
         // uneditable -> editable
 
         // console.log("testing");
@@ -554,16 +554,16 @@ driver = {
         }
           
         // change button
-        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm");
+        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm btn-success");
         // change cancel button too
-        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-trash btn-sm btn-danger");
 
         // change style
         e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
 
         break;
 
-      case "glyphicon glyphicon-ok btn-sm":
+      case "glyphicon glyphicon-ok btn-sm btn-success":
         // editable -> uneditable
         // send to firebase
         // reload
@@ -577,8 +577,8 @@ driver = {
           }
         }
         // change button
-        e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
-        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+        e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm btn-info");
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-trash btn-sm btn-danger");
 
         // send to firebase 
         entry_key = e.target.parentNode.parentNode.lastChild.innerText;
