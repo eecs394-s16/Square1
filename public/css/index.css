@@ -99,3 +99,13 @@ cursor: pointer;
 /*table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after { 
     content: " \25B4\25BE" 
 }*/
+
+.navbar-brand {
+  font-size: 36px;
+  font-weight: bolder; 
+}
+
+#side-menu li{
+  font-size: 18px;
+  font-weight: bold;
+}

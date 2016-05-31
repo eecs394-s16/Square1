@@ -622,7 +622,7 @@ driver = {
               var div = document.createElement('div');
               div.innerHTML = s;
               var newDom = div.childNodes[0];
-              newDom.style.backgroundColor = "#ffd480";
+              newDom.style.backgroundColor = "#D5F5E3";
 
               // replace old dom
               domToReplace = tdArr[i];
@@ -639,7 +639,7 @@ driver = {
         e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-trash btn-sm btn-danger");
 
         // change style
-        e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
+        e.target.parentElement.parentElement.style.backgroundColor = "#D5F5E3";
 
         break;
 
