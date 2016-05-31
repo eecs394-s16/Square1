@@ -69,7 +69,11 @@
   border-radius: 25px;
   background: orange;
 }
-table thead {
+
+#ordersTable table thead {
+   background-color: #e6e6e6;
+}
+#ordersTable thead {
    background-color: #e6e6e6;
 }
 

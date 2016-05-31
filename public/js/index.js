@@ -28,8 +28,8 @@ authDataCallback(globalref.getAuth());
 
 // // onload, load in the dashboard
 // $( document ).ready(function() {
-//   // load("orders");
-//   load("dash");
+//   // // load("orders");
+//   // load("dash");
 // });
 
 // loads pages by redrawing page-wrapper DOM
@@ -88,7 +88,8 @@ function loadFirebase(id){
   switch(id) {
     case "dash":
       // display bottlenecked stuff in widgets
-      bottleneckLogic();
+      inventory_bottleneckLogic();
+      orders_bottleneckLogic();
       break;
     case "inventory":
       var inventoryRef = new Firebase(addr("inventory"));
@@ -300,8 +301,7 @@ function loadFirebase(id){
       // ordersRef.on("child_changed", makeTable);
       // ordersRef.on("child_removed", makeTable);
       break;
-          
-          
+           
     case "shipping":
       // -------------------------------------------------------------------------
       // SHIPPING
@@ -424,7 +424,7 @@ function loadFirebase(id){
 }
 
 // run bottleneck logic here, called from loadFirebase() in the dash case of that switch
-function bottleneckLogic(){
+function inventory_bottleneckLogic(){
   // bottleneck code here!
   // load all relevant firebase refs, iterate through to detect "bottlenecks"
   // if bottleneck is detected, show user in the appropriate widget
@@ -453,14 +453,10 @@ function bottleneckLogic(){
     });
 
     s += '</tbody> </table> </div>';
-
+    document.getElementById("total_inventory_number").innerHTML = snapshot.numChildren();
     document.getElementById("inventory-panel-body").innerHTML = s;
   });
 
-  // orders BOTTLENECK CODE  --------------------------------------------------- 
-  var ordersRef = new Firebase(addr("orders"));
-  // do something
-  // modify widget
 
   // bottleneck functions ----------------------
   // function for generating inventory bottleneck notification html
@@ -472,8 +468,87 @@ function bottleneckLogic(){
   }
 }
 
+
+function orders_bottleneckLogic(){
+
+ // ORDERS BOTTLENECK CODE ---------------------------------------------------
+  var itemsRef = new Firebase(addr("orders"));
+  itemsRef.once("value", function(snapshot){
+    // table html
+    s = '<div class= "table-responsive">' +
+    '<table class="table">' + 
+    '<thead>' +  
+    '<tr> ' +
+    '<th> Items</th>' + 
+    '<th> Deadline</th> ' +
+    '<th> View More </th>' +
+    '</tr> ' +
+    '</thead>' + 
+    '<tbody>' ;
+
+    var total_orders_number = snapshot.numChildren(); 
+    var emergent_orders_number = 0;
+
+    snapshot.forEach(function(data) {
+      
+
+      k = data.val();
+      // table to show order alert data 
+      if (driver.getTimeLeft(k.deadline) == 0){
+        // emergent order
+        emergent_orders_number++;
+
+        s += makeOrderWidget(k);
+      }
+    });
+
+    s += '</tbody> </table> </div>';
+    document.getElementById("active_order_number").innerHTML = total_orders_number - emergent_orders_number;
+    document.getElementById("orders-panel-body").innerHTML = s;
+  });
+
+
+  // bottleneck functions ----------------------
+  // function for generating inventory bottleneck notification html
+
+  var count = 0;
+  function makeOrderWidget(k){
+    
+    a = "";
+    a += "<tr>";
+    a += "<td> <b>" + String(k.items) + " </b> </td>" ;
+    a += "<td> <b> <span style='color : red'>" + String(k.deadline) + "</span> </b> </td>";
+    a += "<td> <button class ='btn btn-info' onclick = driver.orders_viewMore(event)> View </button> </td> </tr>";
+    a += "<tr class='danger' style='display:none; backgroundColor: '> <td colspan = '3'> ";
+    a += "Order# : <b>"  + String(k.order_num) + "</b> <br> Name : <b>" + String(k.name) + " </b><br> Address : <b>" + String(k.address) + "</b> </td>";
+    a += "</tr> ";
+
+    count ++;
+    // a +=  "<tr>";
+    return a;
+  }
+} // orders_bottleneckLogic
+
+
+
 // global object of driver
 driver = {
+
+  
+  orders_viewMore: function(e){
+    // $("#viewMore").click(function(e){
+   // orderstable's viewMore button to show details 
+    e.preventDefault();
+
+    var hiddenRow = e.target.parentNode.parentNode.nextSibling;
+
+    if (hiddenRow.style.display === 'none') {
+      hiddenRow.setAttribute("style", "display:blcok");
+    } else {
+      hiddenRow.setAttribute("style", "display:none");
+    }
+  },
+
   updateStatus: function(col_status, daysLeft) {
     if (daysLeft == 0 ) {
       col_status.innerHTML = '<div id = "redFilledCircle"></div>';
