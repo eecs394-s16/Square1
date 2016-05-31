@@ -55,6 +55,7 @@ function load(id) {
       jQuery.get('pages/orders.html', function(data) {
         document.getElementById("page-wrapper").innerHTML = data;
         loadFirebase(id);
+    
       });
       break;
         
@@ -288,7 +289,11 @@ function loadFirebase(id){
           // update
           driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-      }
+
+        tableObject = document.getElementById("ordersTable");
+        sorttable.makeSortable(tableObject);
+
+      } // makeTable
       // if anything happens, reload
       ordersRef.on("value", makeTable);
       // ordersRef.on("child_added", makeTable);
