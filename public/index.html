@@ -9,9 +9,7 @@
     <meta name="author" content="">
 
     <title>Square1</title>
-
-    <!-- sorting -->
-    <script src="js/sorttable.js"></script>    
+ 
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -68,12 +66,13 @@
                         <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        <!-- <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
                         </li>
                         <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
-                        <li class="divider"></li>
-                        <li><a href="../templates/pages/login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li class="divider"></li> -->
+                        <li onclick="driver.logout">
+                            <a href="#" onclick="driver.logout(event)"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -95,10 +94,10 @@
                             <a href="#" onclick="load('orders')"><i class="fa fa-clock-o fa-fw"></i> Orders</a>
                         </li>
                         <li>
-                            <a href="#" onclick="load('shipping')"><i class="fa fa-clock-o fa-fw"></i> Shipping</a>
+                            <a href="#" onclick="load('shipping')"><i class="fa fa-truck fa-fw"></i> Shipping</a>
                         </li>
                         <li>
-                            <a href="#" onclick="load('tasks')"><i class="fa fa-clock-o fa-fw"></i> Tasks</a>
+                            <a href="#" onclick="load('tasks')"><i class="fa fa-cubes fa-fw"></i> Tasks</a>
                         </li>
                     </ul>
                 </div>
@@ -114,7 +113,8 @@
 
     <!-- jQuery -->
     <script src="js/jquery.min.js"></script>
-    
+        <!-- sorting -->
+    <script src="js/sorttable.js"></script>   
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 

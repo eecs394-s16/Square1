@@ -69,7 +69,11 @@
   border-radius: 25px;
   background: orange;
 }
-table thead {
+
+#ordersTable table thead {
+   background-color: #e6e6e6;
+}
+#ordersTable thead {
    background-color: #e6e6e6;
 }
 
@@ -94,4 +98,14 @@ cursor: pointer;
 
 .highlight {
    background-color: #a8cb17;
+=======
+
+.navbar-brand {
+  font-size: 36px;
+  font-weight: bolder; 
+}
+
+#side-menu li{
+  font-size: 18px;
+  font-weight: bold;
 }

@@ -1,10 +1,36 @@
 // ui stuff ------------------------------------------------------------------------------------
 
-// onload, load in the dashboard
-$( document ).ready(function() {
-  // load("orders");
-  load("dash");
-});
+// refs
+addr = function(feature){
+  return "https://square1.firebaseio.com/" + String(UID) + "/" + feature + "/";
+}
+
+// globalref for user authentication
+var globalref = new Firebase("https://square1.firebaseio.com/");
+// Register the callback to be fired every time auth state changes
+globalref.onAuth(authDataCallback);
+// Create a callback which logs the current auth state
+var UID = -1;
+function authDataCallback(authData) {
+  if (authData) {
+    // logged in, already in index so stay here
+    // get uid
+    UID = authData.uid;
+    load("dash");
+  }
+  else {
+    // not logged in, go to splash to log in
+    window.location = "splash.html";
+  }
+}
+// also check manually at page load
+authDataCallback(globalref.getAuth());
+
+// // onload, load in the dashboard
+// $( document ).ready(function() {
+//   // // load("orders");
+//   // load("dash");
+// });
 
 // loads pages by redrawing page-wrapper DOM
 function load(id) {
@@ -29,6 +55,7 @@ function load(id) {
       jQuery.get('pages/orders.html', function(data) {
         document.getElementById("page-wrapper").innerHTML = data;
         loadFirebase(id);
+    
       });
       break;
         
@@ -59,14 +86,15 @@ function load(id) {
 // call again every time page is drawn (in function "load")
 // read about js switches: http://www.w3schools.com/js/js_switch.asp
 function loadFirebase(id){
-  // only rerun the code for that page being loaded
+  // only return the code for that page being loaded
   switch(id) {
     case "dash":
       // display bottlenecked stuff in widgets
-      bottleneckLogic();
+      inventory_bottleneckLogic();
+      orders_bottleneckLogic();
       break;
     case "inventory":
-      var inventoryRef = new Firebase('https://square1.firebaseio.com/inventory');
+      var inventoryRef = new Firebase(addr("inventory"));
 
       var bottleneck =false;
       var status = "foo green";
@@ -136,6 +164,8 @@ function loadFirebase(id){
             
 
           cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-trash btn-sm glyphic-red" id="remove_button"></button></div>';
+          cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
+          cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue btn-info" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
           
           document.getElementById("remove_button").onclick = deleteRow;
 
@@ -213,22 +243,6 @@ function loadFirebase(id){
             document.getElementById("new_inventory_entry").style.display='none';
         }
       }
-      
-
-
-//      var addFirebase = document.getElementById("add_to_firebase");
-//      addFirebase.onclick = function(){
-//        inventoryRef.push({
-//          Part:document.getElementById("part_input").value,
-//          Sourcing: {
-//            "Cost":         document.getElementById("cost_input").value,
-//            "Quantity":     document.getElementById("quantity_input").value,
-//            "ReorderLevel": document.getElementById("reorder_input").value,
-//            "Location":     document.getElementById("location_input").value,
-//            "Link":         document.getElementById("link_input").value
-//          }
-//        })
-//      }
       break;
     case "orders":
       // -------------------------------------------------------------------------
@@ -236,7 +250,7 @@ function loadFirebase(id){
       // -------------------------------------------------------------------------
       // clear the table in case there's anything there
       // get firebase stuff
-      var ordersRef = new Firebase(addr.orders);
+      var ordersRef = new Firebase(addr("orders"));
 
       makeTable = function(snapshot) {
         document.getElementById("ordersTable-body").innerHTML = "";
@@ -284,7 +298,7 @@ function loadFirebase(id){
           col_dayLeft.innerHTML = daysLeft;
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="orders" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm btn-info" onclick="driver.editEntry(event)"></button></button> <button class="glyphicon glyphicon-trash btn-sm btn-danger" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
@@ -294,26 +308,27 @@ function loadFirebase(id){
           // update
           driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-      }
+
+        tableObject = document.getElementById("ordersTable");
+        sorttable.makeSortable(tableObject);
+
+      } // makeTable
       // if anything happens, reload
       ordersRef.on("value", makeTable);
-      ordersRef.on("child_added", makeTable);
-      ordersRef.on("child_changed", makeTable);
-      ordersRef.on("child_removed", makeTable);
+      // ordersRef.on("child_added", makeTable);
+      // ordersRef.on("child_changed", makeTable);
+      // ordersRef.on("child_removed", makeTable);
       break;
-          
-          
+           
     case "shipping":
      
       // -------------------------------------------------------------------------
       // SHIPPING
       // -------------------------------------------------------------------------
-    var ordersRef = new Firebase(addr.orders);
+      var shipRef = new Firebase(addr("shipping"));
 
-      makeTable = function(snapshot) {
-        document.getElementById("shippingTable-body").innerHTML = "";
-        var table = document.getElementById("shippingTable-body");
-
+      shipRef.on("value", function(snapshot) {
+        var table = document.getElementById("ordersTable-body");
         snapshot.forEach(function(data) {
           var newItem = data.val();
           var row = table.insertRow(0);
@@ -392,7 +407,7 @@ function loadFirebase(id){
       break;
   
       case "tasks":
-          var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
+          var tasksRef = new Firebase(addr("tasks"));
           //              tasksRef.set({
           //                "3001" : {
           //                  Order: "3001",
@@ -460,14 +475,14 @@ function loadFirebase(id){
 }
 
 // run bottleneck logic here, called from loadFirebase() in the dash case of that switch
-function bottleneckLogic(){
+function inventory_bottleneckLogic(){
   // bottleneck code here!
   // load all relevant firebase refs, iterate through to detect "bottlenecks"
   // if bottleneck is detected, show user in the appropriate widget
   // console.log("go here");
 
   // INVENTORY BOTTLENECK CODE ---------------------------------------------------
-  var itemsRef = new Firebase('https://square1.firebaseio.com/inventory');
+  var itemsRef = new Firebase(addr("inventory"));
   itemsRef.once("value", function(snapshot){
     // table html
     s = '<div class= "table-responsive" style = "textAlign:left">' +
@@ -489,14 +504,10 @@ function bottleneckLogic(){
     });
 
     s += '</tbody> </table> </div>';
-
+    document.getElementById("total_inventory_number").innerHTML = snapshot.numChildren();
     document.getElementById("inventory-panel-body").innerHTML = s;
   });
 
-  // orders BOTTLENECK CODE  --------------------------------------------------- 
-  var ordersRef = new Firebase(addr.orders);
-  // do something
-  // modify widget
 
   // bottleneck functions ----------------------
   // function for generating inventory bottleneck notification html
@@ -508,8 +519,87 @@ function bottleneckLogic(){
   }
 }
 
+
+function orders_bottleneckLogic(){
+
+ // ORDERS BOTTLENECK CODE ---------------------------------------------------
+  var itemsRef = new Firebase(addr("orders"));
+  itemsRef.once("value", function(snapshot){
+    // table html
+    s = '<div class= "table-responsive">' +
+    '<table class="table">' + 
+    '<thead>' +  
+    '<tr> ' +
+    '<th> Items</th>' + 
+    '<th> Deadline</th> ' +
+    '<th> View More </th>' +
+    '</tr> ' +
+    '</thead>' + 
+    '<tbody>' ;
+
+    var total_orders_number = snapshot.numChildren(); 
+    var emergent_orders_number = 0;
+
+    snapshot.forEach(function(data) {
+      
+
+      k = data.val();
+      // table to show order alert data 
+      if (driver.getTimeLeft(k.deadline) == 0){
+        // emergent order
+        emergent_orders_number++;
+
+        s += makeOrderWidget(k);
+      }
+    });
+
+    s += '</tbody> </table> </div>';
+    document.getElementById("active_order_number").innerHTML = total_orders_number - emergent_orders_number;
+    document.getElementById("orders-panel-body").innerHTML = s;
+  });
+
+
+  // bottleneck functions ----------------------
+  // function for generating inventory bottleneck notification html
+
+  var count = 0;
+  function makeOrderWidget(k){
+    
+    a = "";
+    a += "<tr>";
+    a += "<td> <b>" + String(k.items) + " </b> </td>" ;
+    a += "<td> <b> <span style='color : red'>" + String(k.deadline) + "</span> </b> </td>";
+    a += "<td> <button class ='btn btn-info' onclick = driver.orders_viewMore(event)> View </button> </td> </tr>";
+    a += "<tr class='danger' style='display:none; backgroundColor: '> <td colspan = '3'> ";
+    a += "Order# : <b>"  + String(k.order_num) + "</b> <br> Name : <b>" + String(k.name) + " </b><br> Address : <b>" + String(k.address) + "</b> </td>";
+    a += "</tr> ";
+
+    count ++;
+    // a +=  "<tr>";
+    return a;
+  }
+} // orders_bottleneckLogic
+
+
+
 // global object of driver
 driver = {
+
+  
+  orders_viewMore: function(e){
+    // $("#viewMore").click(function(e){
+   // orderstable's viewMore button to show details 
+    e.preventDefault();
+
+    var hiddenRow = e.target.parentNode.parentNode.nextSibling;
+
+    if (hiddenRow.style.display === 'none') {
+      hiddenRow.setAttribute("style", "display:blcok");
+    } else {
+      hiddenRow.setAttribute("style", "display:none");
+    }
+  },
+
   updateStatus: function(col_status, daysLeft) {
     if (daysLeft == 0 ) {
       col_status.innerHTML = '<div id = "redFilledCircle"></div>';
@@ -545,7 +635,7 @@ driver = {
   editEntry: function(e){
     tempEntry = e.target.parentElement.parentElement.cloneNode(true);
     switch (e.target.getAttribute("class")){
-      case "glyphicon glyphicon-edit btn-sm":
+      case "glyphicon glyphicon-edit btn-sm btn-info":
         // uneditable -> editable
 
         // console.log("testing");
@@ -583,7 +673,7 @@ driver = {
               var div = document.createElement('div');
               div.innerHTML = s;
               var newDom = div.childNodes[0];
-              newDom.style.backgroundColor = "#ffd480";
+              newDom.style.backgroundColor = "#D5F5E3";
 
               // replace old dom
               domToReplace = tdArr[i];
@@ -615,12 +705,12 @@ driver = {
         }
           
         // change button
-        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm");
+        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm btn-success");
         // change cancel button too
-        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-trash btn-sm btn-danger");
 
         // change style
-        e.target.parentElement.parentElement.style.backgroundColor = "#ffd480";
+        e.target.parentElement.parentElement.style.backgroundColor = "#D5F5E3";
 
         break;
 
@@ -680,7 +770,6 @@ driver = {
                       break;
                     // default:
                   }
-
 
                   dataToSend[headerText] = data;
                 }
@@ -768,10 +857,8 @@ driver = {
                     // default:
                   }
 
-
                   dataToSend[headerText] = data;
                 }
-
               deadlineCol = $('#ordersTable').find('input').val();
                 if (deadlineCol){
                   headerText = "deadline";
@@ -807,7 +894,7 @@ driver = {
   
   addEmptyItem: function(e){
     // add empty item
-    var ordersRef = new Firebase(addr.orders);
+    var ordersRef = new Firebase(addr("orders"));
     ordersRef.push({
       "order_num":  "",
       "name":       "",
@@ -821,7 +908,7 @@ driver = {
     });
     // make sure it's loaded from firebase back to page
     // load("orders");
-    // call driver.editEntry with the new item
+    // call driver.editEntry with the new item)
   },
 
   reload: function(id){
@@ -837,7 +924,7 @@ driver = {
     switch (e.target.innerHTML){
       case "":
         entry_key = e.target.parentNode.parentNode.lastChild.innerText;
-        var remRef = new Firebase(addr.orders + entry_key);
+        var remRef = new Firebase(addr("orders") + entry_key);
         remRef.remove();
         break
       case "cancel":
@@ -847,7 +934,6 @@ driver = {
         break
     }
   },
-
   makeLabel: function(e){
       // if 
       var path    = require("path");
@@ -916,27 +1002,6 @@ driver = {
           weight: 21.2
       };
 
-      // // create customs_info form for intl shipping
-      // var customsItem = {
-      //     description: "Audiovert Speaker",
-      //     hs_tariff_number: 123456,
-      //     origin_country: "US",
-      //     quantity: 2,
-      //     value: 96.27,
-      //     weight: 21.1
-      // };
-
-      // var customsInfo = {
-      //     customs_certify: 1,
-      //     customs_signer: "Hector Hammerfall",
-      //     contents_type: "gift",
-      //     contents_explanation: "",
-      //     eel_pfc: "NOEEI 30.37(a)",
-      //     non_delivery_option: "return",
-      //     restriction_type: "none",
-      //     restriction_comments: "",
-      //     customs_items: [customsItem]
-      // };
       var postage_label;
 
       // create shipment
@@ -954,11 +1019,8 @@ driver = {
 
           });
       });
-   
+    },
+  logout: function(e){
+    globalref.unauth();
   },
-}
-
-// global refs
-addr = {
-  orders: "https://square1.firebaseio.com/orders/",
 }

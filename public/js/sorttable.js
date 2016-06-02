@@ -147,10 +147,11 @@ sorttable = {
 	        for (var j=0; j<rows.length; j++) {
 	          row_array[row_array.length] = [sorttable.getInnerText(rows[j].cells[col]), rows[j]];
 	        }
-	        /* If you want a stable sort, uncomment the following line */
-	        //sorttable.shaker_sort(row_array, this.sorttable_sortfunction);
-	        /* and comment out this one */
-	        row_array.sort(this.sorttable_sortfunction);
+	        //If you want a stable sort, uncomment the following line */
+	        sorttable.shaker_sort(row_array, this.sorttable_sortfunction);
+	        // and comment out this one */
+	        // row_array.sort(this.sorttable_sortfunction);
+          // row_array.reverse();
 
 	        tb = this.sorttable_tbody;
 	        for (var j=0; j<row_array.length; j++) {
