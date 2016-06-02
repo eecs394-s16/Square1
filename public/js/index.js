@@ -16,7 +16,8 @@ function authDataCallback(authData) {
     // logged in, already in index so stay here
     // get uid
     UID = authData.uid;
-    load("dash");
+    // load("dash");
+    load("orders");
   }
   else {
     // not logged in, go to splash to log in
@@ -239,8 +240,8 @@ function loadFirebase(id){
       var ordersRef = new Firebase(addr("orders"));
 
       makeTable = function(snapshot) {
-        document.getElementById("ordersTable-body").innerHTML = "";
         var table = document.getElementById("ordersTable-body");
+        table.innerHTML = "";
 
         snapshot.forEach(function(data) {
           var newItem = data.val();
@@ -284,7 +285,7 @@ function loadFirebase(id){
           col_dayLeft.innerHTML = daysLeft;
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm btn-info" onclick="driver.editEntry(event)"></button></button> <button class="glyphicon glyphicon-trash btn-sm btn-danger" onclick="driver.deleteEntry(event)">'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm btn-info" featureSrc="orders" onclick="driver.editEntry(event)"></button></button> <button class="glyphicon glyphicon-trash btn-sm btn-danger" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
@@ -373,7 +374,7 @@ function loadFirebase(id){
           'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genSlip()"}>Insert Slip </button>';
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="shipping" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" featureSrc="shipping" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
@@ -591,90 +592,268 @@ driver = {
   },  // getTimeLeft
   tempEntry: "",
   editEntry: function(e){
-    tempEntry = e.target.parentElement.parentElement.cloneNode(true);
-    switch (e.target.getAttribute("class")){
-      case "glyphicon glyphicon-edit btn-sm btn-info":
-        // uneditable -> editable
+    featureSource = document.getElementById("featureSrc").getAttribute("featureSrc");
+    switch (featureSource){
+      case "orders":
+        switch (e.target.getAttribute("class")){
+          case "glyphicon glyphicon-edit btn-sm btn-info":
+            // uneditable -> editable
 
-        // console.log("testing");
-        // make editable
-        tdArr = e.target.parentElement.parentElement.children;
-        for (var i=0; i<tdArr.length; i++){
-          if (tdArr[i].getAttribute("contenteditable") != null){
-            tdArr[i].setAttribute("contenteditable", true);
-          }
-          switch (tdArr[i].getAttribute("celltype")){ 
-            case "order_num":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = '<strong>##</strong>';
-                tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+            // console.log("testing");
+            // make editable
+            this.tempEntry = e.target.parentElement.parentElement.cloneNode(true);
+            tdArr = e.target.parentElement.parentElement.children;
+            for (var i=0; i<tdArr.length; i++){
+              if (tdArr[i].getAttribute("contenteditable") != null){
+                tdArr[i].setAttribute("contenteditable", true);
               }
-              break
-            case "name":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>first last</strong>";
-              }
-              break
-            case "address":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>address</strong>";
-              }
-              break
-            case "item":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>item name</strong>";
-              }
-              break
-            case "deadline":
-              // make input dom
-              var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'+tdArr[i].html+'</input>'; // HTML string
-              var div = document.createElement('div');
-              div.innerHTML = s;
-              var newDom = div.childNodes[0];
-              newDom.style.backgroundColor = "#D5F5E3";
+              switch (tdArr[i].getAttribute("celltype")){ 
+                case "order_num":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = '<strong>##</strong>';
+                    tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+                  }
+                  break
+                case "name":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>first last</strong>";
+                  }
+                  break
+                case "address":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>address</strong>";
+                  }
+                  break
+                case "item":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>item name</strong>";
+                  }
+                  break
+                case "deadline":
+                  // make input dom
+                  var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'+tdArr[i].html+'</input>'; // HTML string
+                  var div = document.createElement('div');
+                  div.innerHTML = s;
+                  var newDom = div.childNodes[0];
+                  newDom.style.backgroundColor = "#D5F5E3";
 
-              // replace old dom
-              domToReplace = tdArr[i];
-              domToReplace.parentElement.insertBefore(newDom, domToReplace);
-              domToReplace.parentElement.removeChild(domToReplace);
-              tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
-              break
-            case "weight":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>weight</strong>";
+                  // replace old dom
+                  domToReplace = tdArr[i];
+                  domToReplace.parentElement.insertBefore(newDom, domToReplace);
+                  domToReplace.parentElement.removeChild(domToReplace);
+                  tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+                  break
+                case "weight":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>weight</strong>";
+                  }
+                  break 
+                case "length":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>length</strong>";
+                  }
+                  break 
+                case "height":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>height</strong>";
+                  }
+                  break 
+                case "width":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>width</strong>";
+                  }
+                  break 
               }
-              break 
-            case "length":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>length</strong>";
+            }
+              
+            // change button
+            e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm btn-success");
+            // change cancel button too
+            e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm btn-danger");
+            e.target.parentElement.lastChild.setAttribute("onclick", "driver.unselectEntry(event)");
+
+
+            // change style
+            e.target.parentElement.parentElement.style.backgroundColor = "#D5F5E3";
+
+            break;
+          case "glyphicon glyphicon-ok btn-sm btn-success":
+            // editable -> uneditable
+            // send to firebase
+            // reload
+
+            // console.log("testing");
+            // make uneditable
+            tdArr = e.target.parentElement.parentElement.children;
+            for (var i=0; i<tdArr.length; i++){
+              if (tdArr[i].getAttribute("contenteditable") != null){
+                tdArr[i].setAttribute("contenteditable", false);
               }
-              break 
-            case "height":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>height</strong>";
+            }
+            // change button
+            e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
+            e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
+            e.target.parentElement.lastChild.setAttribute("onclick", "driver.deleteEntry(event)");
+
+            // send to firebase 
+            entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+            entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
+
+            // get all data with false contenteditable
+            dataToSend = {};
+            // row data is an object
+            $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
+              $(this).find('td').each(function() {
+                if (this.cellIndex == 5) {
+                  // this is pointing to daysleft column
+                  // deadline column update daysLeftColumn
+                  this.innerText = driver.getTimeLeft(this.previousSibling.value);
+                  driver.updateStatus(this.parentNode.firstChild, this.innerText);
+                }
+
+                if (this.hasAttribute("contenteditable")) {
+                  colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
+                  switch (colName){
+                    case "Order#":
+                      headerText="order_num";
+                      data = this.innerText;
+                      break;
+                    case "Name": 
+                      headerText="name";   
+                      data = this.innerText; 
+                      break;
+                    case "Address": 
+                      headerText="address"; 
+                      data = this.innerText; 
+                      break;
+                    case "Items": 
+                      headerText="items";  
+                      data = this.innerText; 
+                      break;
+                    // default:
+                  }
+
+                  dataToSend[headerText] = data;
+                }
+
+              deadlineCol = $('#ordersTable').find('input').val();
+                if (deadlineCol){
+                  headerText = "deadline";
+                  data = deadlineCol;
+
+                  dataToSend[headerText] = data;
+                }
+              });// each td find contenteditable
+            }); // find row of the event happens
+
+            // replace entry with original data
+            // if no modifications, then this will be what's seen because table refresh is not triggered
+            // if modifications, this will be overwritten with proper data on table refresh callback
+            domToReplace = e.target.parentElement.parentElement;
+            domToReplace.parentElement.insertBefore(this.tempEntry, domToReplace);
+            domToReplace.parentElement.removeChild(domToReplace);
+
+            // send to database
+            var ordersRef = new Firebase(addr("orders") + entry_key);
+            ordersRef.update(dataToSend);
+
+            // change style
+            e.target.parentElement.parentElement.style.backgroundColor = "";
+            // change arianas stupid input thing 
+            tdArr = e.target.parentElement.parentElement.children;
+            for (i in tdArr){
+              if (tdArr[i].getAttribute){
+                if (tdArr[i].getAttribute("celltype")=="deadline"){
+                  tdArr[i].style.backgroundColor = "";
+                }            
               }
-              break 
-            case "width":
-              if (tdArr[i]==""){
-                tdArr[i].innerHTML = "<strong>width</strong>";
-              }
-              break 
-          }
+            }
         }
-          
-        // change button
-        e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm btn-success");
-        // change cancel button too
-        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-trash btn-sm btn-danger");
-
-        // change style
-        e.target.parentElement.parentElement.style.backgroundColor = "#D5F5E3";
-
         break;
+      case "shipping":
+        switch (e.target.getAttribute("class")){
+          case "glyphicon glyphicon-edit btn-sm btn-info":
+            // uneditable -> editable
 
-      case "glyphicon glyphicon-ok btn-sm":
-         switch (e.target.getAttribute("id")){
-          case "orders":
+            // console.log("testing");
+            // make editable
+            this.tempEntry = e.target.parentElement.parentElement.cloneNode(true);
+            tdArr = e.target.parentElement.parentElement.children;
+            for (var i=0; i<tdArr.length; i++){
+              if (tdArr[i].getAttribute("contenteditable") != null){
+                tdArr[i].setAttribute("contenteditable", true);
+              }
+              switch (tdArr[i].getAttribute("celltype")){ 
+                case "order_num":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = '<strong>##</strong>';
+                    tdArr[i].setAttribute("onfocus", '"driver.selectAll(event)"');
+                  }
+                  break
+                case "name":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>first last</strong>";
+                  }
+                  break
+                case "address":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>address</strong>";
+                  }
+                  break
+                case "item":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>item name</strong>";
+                  }
+                  break
+                case "deadline":
+                  // make input dom
+                  var s = '<input contenteditable="true" celltype="deadline" type="date" style="height:100% !important; width:100% !important">'+tdArr[i].html+'</input>'; // HTML string
+                  var div = document.createElement('div');
+                  div.innerHTML = s;
+                  var newDom = div.childNodes[0];
+                  newDom.style.backgroundColor = "#D5F5E3";
+
+                  // replace old dom
+                  domToReplace = tdArr[i];
+                  domToReplace.parentElement.insertBefore(newDom, domToReplace);
+                  domToReplace.parentElement.removeChild(domToReplace);
+                  tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+                  break
+                case "weight":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>weight</strong>";
+                  }
+                  break 
+                case "length":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>length</strong>";
+                  }
+                  break 
+                case "height":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>height</strong>";
+                  }
+                  break 
+                case "width":
+                  if (tdArr[i]==""){
+                    tdArr[i].innerHTML = "<strong>width</strong>";
+                  }
+                  break 
+              }
+            }
+              
+            // change button
+            e.target.setAttribute("class", "glyphicon glyphicon-ok btn-sm btn-success");
+            // change cancel button too
+            e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm btn-danger");
+            e.target.parentElement.lastChild.setAttribute("onclick", "driver.unselectEntry(event)");
+
+
+            // change style
+            e.target.parentElement.parentElement.style.backgroundColor = "#D5F5E3";
+
+            break;
+          case "glyphicon glyphicon-ok btn-sm btn-success":
             // editable -> uneditable
             // send to firebase
             // reload
@@ -731,12 +910,10 @@ driver = {
 
                   dataToSend[headerText] = data;
                 }
-
               deadlineCol = $('#ordersTable').find('input').val();
                 if (deadlineCol){
                   headerText = "deadline";
                   data = deadlineCol;
-
                   dataToSend[headerText] = data;
                 }
               });// each td find contenteditable
@@ -744,7 +921,7 @@ driver = {
 
             // console.log(dataToSend);
 
-            var ordersRef = new Firebase(addr.orders + entry_key);
+            var ordersRef = new Firebase(addr("shipping") + entry_key);
             ordersRef.update(dataToSend);
 
             // change style
@@ -759,131 +936,59 @@ driver = {
               }
             }
             break;
-
-          case "shipping":
-          // editable -> uneditable
-            // send to firebase
-            // reload
-
-            // console.log("testing");
-            // make uneditable
-            tdArr = e.target.parentElement.parentElement.children;
-            for (var i=0; i<tdArr.length; i++){
-              if (tdArr[i].getAttribute("contenteditable") != null){
-                tdArr[i].setAttribute("contenteditable", false);
-              }
-            }
-            // change button
-            e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
-            e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
-
-            // send to firebase 
-            entry_key = e.target.parentNode.parentNode.lastChild.innerText;
-            entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
-
-            // get all data with false contenteditable
-            dataToSend = {};
-            // row data is an object
-            $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
-              $(this).find('td').each(function() {
-                if (this.cellIndex == 5) {
-                  // this is pointing to daysleft column
-                  // deadline column update daysLeftColumn
-                  this.innerText = driver.getTimeLeft(this.previousSibling.value);
-                  driver.updateStatus(this.parentNode.firstChild, this.innerText);
-                }
-
-                if (this.hasAttribute("contenteditable")) {
-                  colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
-                  switch (colName){
-                    case "Order#":
-                      headerText="order_num";
-                      data = this.innerText;
-                      break;
-                    case "Name": 
-                      headerText="name";   
-                      data = this.innerText; 
-                      break;
-                    case "Address": 
-                      headerText="address"; 
-                      data = this.innerText; 
-                      break;
-                    case "Items": 
-                      headerText="items";  
-                      data = this.innerText; 
-                      break;
-                    // default:
-                  }
-
-                  dataToSend[headerText] = data;
-                }
-              deadlineCol = $('#ordersTable').find('input').val();
-                if (deadlineCol){
-                  headerText = "deadline";
-                  data = deadlineCol;
-
-                  dataToSend[headerText] = data;
-                }
-              });// each td find contenteditable
-            }); // find row of the event happens
-
-            // console.log(dataToSend);
-
-            var ordersRef = new Firebase(addr.orders + entry_key);
-            ordersRef.update(dataToSend);
-
-            // change style
-            e.target.parentElement.parentElement.style.backgroundColor = "";
-            // change arianas stupid input thing 
-            tdArr = e.target.parentElement.parentElement.children;
-            for (i in tdArr){
-              if (tdArr[i].getAttribute){
-                if (tdArr[i].getAttribute("celltype")=="deadline"){
-                  tdArr[i].style.backgroundColor = "";
-                }            
-              }
-            }
-            break;
-
-      }
-      break;
+        }
+        break;
     }
   },
+  unselectEntry: function(e){
+    // alert("unselecting entry");
+    domToReplace = e.target.parentElement.parentElement;
+    domToReplace.parentElement.insertBefore(this.tempEntry, domToReplace);
+    domToReplace.parentElement.removeChild(domToReplace);
+  },
   addEmptyItem: function(e){
-    // add empty item
-    var ordersRef = new Firebase(addr("orders"));
-    ordersRef.push({
-      "order_num":  "",
-      "name":       "",
-      "address":    "",
-      "items":      "",
-      "deadline":   "",
-      "weight":     "",
-      "height":     "",
-      "width":      "",
-      "length":      "",
-    });
-    // make sure it's loaded from firebase back to page
-    // load("orders");
-    // call driver.editEntry with the new item)
+    featureSource = document.getElementById("featureSrc").getAttribute("featureSrc");
+    switch(featureSource){
+      case "orders":
+        addEmptyItemRef = new Firebase(addr(featureSource));
+        objToPush = {
+          "order_num":  "",
+          "name":       "",
+          "address":    "",
+          "items":      "",
+          "deadline":   "",
+          "weight":     "",
+          "height":     "",
+          "width":      "",
+          "length":      "",          
+        }
+        break;
+      case "shipping":
+        // same as orders, uses same database
+        addEmptyItemRef = new Firebase(addr(featureSource));
+        objToPush = {
+          "order_num":  "",
+          "name":       "",
+          "address":    "",
+          "items":      "",
+          "deadline":   "",
+          "weight":     "",
+          "height":     "",
+          "width":      "",
+          "length":      "",          
+        }
+        break;
+    }
+    addEmptyItemRef.push(objToPush);
   },
   reload: function(id){
 
     loadFirebase(id);
   },
   deleteEntry: function(e){
-    switch (e.target.innerHTML){
-      case "":
-        entry_key = e.target.parentNode.parentNode.lastChild.innerText;
-        var remRef = new Firebase(addr("orders") + entry_key);
-        remRef.remove();
-        break
-      case "cancel":
-        domToReplace = e.target.parentElement.parentElement;
-        domToReplace.parentElement.insertBefore(tempEntry, domToReplace);
-        domToReplace.parentElement.removeChild(domToReplace);
-        break
-    }
+    entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+    var remRef = new Firebase(addr("orders") + entry_key);
+    remRef.remove();
   },
   makeLabel: function(e){
     // if 
