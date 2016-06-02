@@ -26,12 +26,6 @@ function authDataCallback(authData) {
 // also check manually at page load
 authDataCallback(globalref.getAuth());
 
-// // onload, load in the dashboard
-// $( document ).ready(function() {
-//   // // load("orders");
-//   // load("dash");
-// });
-
 // loads pages by redrawing page-wrapper DOM
 function load(id) {
   switch(id) {
@@ -156,13 +150,7 @@ function loadFirebase(id){
           cell3.innerHTML = newItem.Sourcing.ReorderLevel;
           cell4.innerHTML = newItem.Sourcing.Cost;
           cell5.innerHTML = newItem.Sourcing.Location;
-//          cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
           cell6.innerHTML =newItem.Sourcing.Link;
-
-
-            
-            
-
           cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue" id="edit_button"></button><button class="glyphicon glyphicon-trash btn-sm glyphic-red" id="remove_button"></button></div>';
           cell6.innerHTML = '<a href ='+newItem.Sourcing.Link+' style="text-decoration:none"> <button class="btn btn-secondary">Order</button></a>';
           cell7.innerHTML = '<button class="glyphicon glyphicon-edit btn-sm glyphic-cadetblue btn-info" id="edit_button"></button><button class="glyphicon glyphicon-remove btn-sm glyphic-red" id="remove_button"></button></div>';
@@ -228,19 +216,17 @@ function loadFirebase(id){
         document.getElementById("new_inventory_entry").style.display='block';
         var buttonPush = document.getElementById("add_item");
         buttonPush.onclick =function(){
-            inventoryRef.push({
-                Part:document.getElementById("part_input").value,
-                Sourcing: {
-                    "Cost":document.getElementById("cost_input").value,
-                    "Quantity":document.getElementById("quantity_input").value,
-                    "ReorderLevel":document.getElementById("reorder_input").value,
-                    "Location":document.getElementById("location_input").value,
-                    "Link":document.getElementById("link_input").value
-                }
-                
-            })
-            
-            document.getElementById("new_inventory_entry").style.display='none';
+          inventoryRef.push({
+            Part:document.getElementById("part_input").value,
+            Sourcing: {
+              "Cost":document.getElementById("cost_input").value,
+              "Quantity":document.getElementById("quantity_input").value,
+              "ReorderLevel":document.getElementById("reorder_input").value,
+              "Location":document.getElementById("location_input").value,
+              "Link":document.getElementById("link_input").value
+            }
+          })
+          document.getElementById("new_inventory_entry").style.display='none';
         }
       }
       break;
@@ -319,7 +305,6 @@ function loadFirebase(id){
       // ordersRef.on("child_changed", makeTable);
       // ordersRef.on("child_removed", makeTable);
       break;
-           
     case "shipping":
      
       // -------------------------------------------------------------------------
@@ -328,7 +313,7 @@ function loadFirebase(id){
       var shipRef = new Firebase(addr("shipping"));
 
       shipRef.on("value", function(snapshot) {
-        var table = document.getElementById("ordersTable-body");
+        var table = document.getElementById("shippingTable-body");
         snapshot.forEach(function(data) {
           var newItem = data.val();
           var row = table.insertRow(0);
@@ -395,80 +380,61 @@ function loadFirebase(id){
           hidden_key.innerHTML = data.key();
           hidden_key.style.display='none';
 
-          // update
+          // calculate the days left 
+          var daysLeft = driver.getTimeLeft(newItem.deadline);
           driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-      }
-      // if anything happens, reload
-      ordersRef.on("value", makeTable);
-      ordersRef.on("child_added", makeTable);
-      ordersRef.on("child_changed", makeTable);
-      ordersRef.on("child_removed", makeTable);
+      });
+
       break;
-  
-      case "tasks":
-          var tasksRef = new Firebase(addr("tasks"));
-          //              tasksRef.set({
-          //                "3001" : {
-          //                  Order: "3001",
-          //                  Item: "Quad Speaker",
-          //                  location: "Bin 50/Shelf 50",
-          //                  next_task: "Wire switch panel",
-          //                  team_member: "Tim"
-          //                }
-          //              });
- 
-          tasksRef.on("value", function(snapshot){
-              var table = document.getElementById("taskTable");
-              snapshot.forEach(function(data){
-                  var newItem = data.val();
-                  var row = table.insertRow(0);
-                  cell0 = row.insertCell(0);
-                  cell0.setAttribute('contenteditable',false);
-                  cell1 = row.insertCell(1);
-                  cell1.setAttribute('contenteditable',false);
-                  cell2 = row.insertCell(2);
-                  cell2.setAttribute('contenteditable',false);
-                  cell3 = row.insertCell(3);
-                  cell3.setAttribute('contenteditable',false);
-                  cell4 = row.insertCell(4);
-                  cell4.setAttribute('contenteditable',false);
-                  cell5 = row.insertCell(5);
-                  cell4.setAttribute('contenteditable',false);
-                  cell6 = row.insertCell(6);
-                  
-                  cell0.innerHTML = '<div class ="foo orange"></div>'
-                  cell1.innerHTML = newItem.Order
-                  cell2.innerHTML = newItem.Item;
-                  cell3.innerHTML = newItem.location;
-                  cell4.innerHTML = newItem.next_task;
-                  cell5.innerHTML = newItem.team_member;
-                  cell6.innerHTML = ' <button class="btn btn-secondary">Next</button>'
-              })
-              
-              document.getElementById("new_task_entry").style.display='none';
-              var buttonID = document.getElementById("add_item");
-              buttonID.onclick = function(){
-                  document.getElementById("new_task_entry").style.display='block';
-              }
-              
-              var addTask = document.getElementById("add_to_firebase");
-                  addTask.onclick = function(){
-                    tasksRef.push({
-                      Order:document.getElementById("order_input").value,
-                      Item:document.getElementById("item_input").value,
-                      location:document.getElementById("location_input").value,
-                      next_task:document.getElementById("nextTask_input").value,
-                      team_member:document.getElementById("member_input").value    
-                      
-                    })
-                  }      
+    case "tasks":
+      var tasksRef = new Firebase(addr("tasks"));
+      tasksRef.on("value", function(snapshot){
+        var table = document.getElementById("taskTable");
+        snapshot.forEach(function(data){
+          var newItem = data.val();
+          var row = table.insertRow(0);
+          cell0 = row.insertCell(0);
+          cell0.setAttribute('contenteditable',false);
+          cell1 = row.insertCell(1);
+          cell1.setAttribute('contenteditable',false);
+          cell2 = row.insertCell(2);
+          cell2.setAttribute('contenteditable',false);
+          cell3 = row.insertCell(3);
+          cell3.setAttribute('contenteditable',false);
+          cell4 = row.insertCell(4);
+          cell4.setAttribute('contenteditable',false);
+          cell5 = row.insertCell(5);
+          cell4.setAttribute('contenteditable',false);
+          cell6 = row.insertCell(6);
+          
+          cell0.innerHTML = '<div class ="foo orange"></div>'
+          cell1.innerHTML = newItem.Order
+          cell2.innerHTML = newItem.Item;
+          cell3.innerHTML = newItem.location;
+          cell4.innerHTML = newItem.next_task;
+          cell5.innerHTML = newItem.team_member;
+          cell6.innerHTML = ' <button class="btn btn-secondary">Next</button>'
+        })
+        
+        document.getElementById("new_task_entry").style.display='none';
+        var buttonID = document.getElementById("add_item");
+        buttonID.onclick = function(){
+          document.getElementById("new_task_entry").style.display='block';
+        }
+        
+        var addTask = document.getElementById("add_to_firebase");
+        addTask.onclick = function(){
+          tasksRef.push({
+            Order:document.getElementById("order_input").value,
+            Item:document.getElementById("item_input").value,
+            location:document.getElementById("location_input").value,
+            next_task:document.getElementById("nextTask_input").value,
+            team_member:document.getElementById("member_input").value    
           })
-          
-          break;
-          
-          
-          
+        }      
+      })
+      break;
     default:
       console.log("got bad load id");
   }
@@ -580,12 +546,8 @@ function orders_bottleneckLogic(){
   }
 } // orders_bottleneckLogic
 
-
-
 // global object of driver
 driver = {
-
-  
   orders_viewMore: function(e){
     // $("#viewMore").click(function(e){
    // orderstable's viewMore button to show details 
@@ -599,7 +561,6 @@ driver = {
       hiddenRow.setAttribute("style", "display:none");
     }
   },
-
   updateStatus: function(col_status, daysLeft) {
     if (daysLeft == 0 ) {
       col_status.innerHTML = '<div id = "redFilledCircle"></div>';
@@ -616,7 +577,6 @@ driver = {
       col_status.innerHTML = '<div id ="orangeFilledCircle"></div>';
     }
   },
-
   getTimeLeft: function(deadline){
     var dateObj = new Date(deadline);  // convert string to date object 
 
@@ -629,9 +589,7 @@ driver = {
       diffDays = 0;
     return diffDays;
   },  // getTimeLeft
-
   tempEntry: "",
-
   editEntry: function(e){
     tempEntry = e.target.parentElement.parentElement.cloneNode(true);
     switch (e.target.getAttribute("class")){
@@ -891,7 +849,6 @@ driver = {
       break;
     }
   },
-  
   addEmptyItem: function(e){
     // add empty item
     var ordersRef = new Firebase(addr("orders"));
@@ -910,16 +867,10 @@ driver = {
     // load("orders");
     // call driver.editEntry with the new item)
   },
-
   reload: function(id){
 
     loadFirebase(id);
   },
-
-  selectAll: function(e){
-    alert("hah you too");
-  },
-
   deleteEntry: function(e){
     switch (e.target.innerHTML){
       case "":
@@ -935,92 +886,92 @@ driver = {
     }
   },
   makeLabel: function(e){
-      // if 
-      var path    = require("path");
+    // if 
+    var path    = require("path");
+    console.log(__dirname);
+
+    app.get('/',function(req,res){
+      res.sendFile(path.join(__dirname+'/shipping.html'));
       console.log(__dirname);
+      //__dirname : It will resolve to your project folder.
+    });
 
-      app.get('/',function(req,res){
-        res.sendFile(path.join(__dirname+'/shipping.html'));
-        console.log(__dirname);
-        //__dirname : It will resolve to your project folder.
+
+    app.listen(3000);
+
+    console.log("Running at Port 3000");
+
+    var apiKey = '5NTaCzvLSV1MnYPbNpwxOg';
+    var easypost = require('node-easypost')(apiKey);
+
+    // set addresses
+    var toAddress = {
+      name: document.getElementById("name_input").value,
+      street1: document.getElementById("address_input").value,
+      city: "Redondo Beach",
+      state: "CA",
+      zip: "90277",
+      country: "US",
+      phone: "310-808-5243"
+    };
+    var fromAddress = {
+      name: "Square1",
+      street1: "The Garage",
+      street2: "4th Floor",
+      city: "Evanston",
+      state: "Il",
+      zip: "60201",
+      phone: "415-123-4567"
+    };
+
+    // verify address
+    easypost.Address.create(fromAddress, function(err, fromAddress) {
+      fromAddress.verify(function(err, response) {
+        if (err) {
+          console.log('Address is invalid.');
+        } else if (response.message !== undefined && response.message !== null) {
+          console.log('Address is valid but has an issue: ', response.message);
+          var verifiedAddress = response.address;
+        } else {
+          var verifiedAddress = response;
+        }
       });
+    });
 
+    // set parcel
+    easypost.Parcel.create({
+      predefined_package: "InvalidPackageName",
+      weight: 21.2
+    }, function(err, response) {
+      console.log(err);
+    });
 
-      app.listen(3000);
+    var parcel = {
+      length: 10.2,
+      width: 7.8,
+      height: 4.3,
+      weight: 21.2
+    };
 
-      console.log("Running at Port 3000");
+    var postage_label;
 
-      var apiKey = '5NTaCzvLSV1MnYPbNpwxOg';
-      var easypost = require('node-easypost')(apiKey);
-
-      // set addresses
-      var toAddress = {
-          name: document.getElementById("name_input").value,
-          street1: document.getElementById("address_input").value,
-          city: "Redondo Beach",
-          state: "CA",
-          zip: "90277",
-          country: "US",
-          phone: "310-808-5243"
-      };
-      var fromAddress = {
-          name: "Square1",
-          street1: "The Garage",
-          street2: "4th Floor",
-          city: "Evanston",
-          state: "Il",
-          zip: "60201",
-          phone: "415-123-4567"
-      };
-
-      // verify address
-      easypost.Address.create(fromAddress, function(err, fromAddress) {
-          fromAddress.verify(function(err, response) {
-              if (err) {
-                  console.log('Address is invalid.');
-              } else if (response.message !== undefined && response.message !== null) {
-                  console.log('Address is valid but has an issue: ', response.message);
-                  var verifiedAddress = response.address;
-              } else {
-                  var verifiedAddress = response;
-              }
-          });
+    // create shipment
+    easypost.Shipment.create({
+      to_address: toAddress,
+      from_address: fromAddress,
+      parcel: parcel,
+      customs_info: customsInfo
+    }, function(err, shipment) {
+      // buy postage label with one of the rate objects
+      shipment.buy({rate: shipment.lowestRate(['USPS', 'ups', 'Fedex']), insurance: 100.00}, function(err, shipment) {
+        console.log(shipment.tracking_code);
+        console.log(shipment.postage_label.label_url);
+        postage_label = shipment.postage_label.label_url;
       });
-
-      // set parcel
-      easypost.Parcel.create({
-          predefined_package: "InvalidPackageName",
-          weight: 21.2
-      }, function(err, response) {
-          console.log(err);
-      });
-
-      var parcel = {
-          length: 10.2,
-          width: 7.8,
-          height: 4.3,
-          weight: 21.2
-      };
-
-      var postage_label;
-
-      // create shipment
-      easypost.Shipment.create({
-          to_address: toAddress,
-          from_address: fromAddress,
-          parcel: parcel,
-          customs_info: customsInfo
-      }, function(err, shipment) {
-          // buy postage label with one of the rate objects
-          shipment.buy({rate: shipment.lowestRate(['USPS', 'ups', 'Fedex']), insurance: 100.00}, function(err, shipment) {
-              console.log(shipment.tracking_code);
-              console.log(shipment.postage_label.label_url);
-              postage_label = shipment.postage_label.label_url;
-
-          });
-      });
-    },
+    });
+  },
   logout: function(e){
+
     globalref.unauth();
   },
 }
