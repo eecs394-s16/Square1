@@ -17,7 +17,7 @@ function authDataCallback(authData) {
     // get uid
     UID = authData.uid;
     // load("dash");
-    load("orders");
+    load("shipping");
   }
   else {
     // not logged in, go to splash to log in
@@ -306,14 +306,97 @@ function loadFirebase(id){
       // ordersRef.on("child_removed", makeTable);
       break;
     case "shipping":
-     
+      // // -------------------------------------------------------------------------
+      // // SHIPPING
+      // // -------------------------------------------------------------------------
+      // var shipRef = new Firebase(addr("shipping"));
+
+      // shipRef.on("value", function(snapshot) {
+      //   var table = document.getElementById("shippingTable-body");
+      //   snapshot.forEach(function(data) {
+      //     var newItem = data.val();
+      //     var row = table.insertRow(0);
+      //     var colIndex = 0;
+
+      //     // first create the status column with defult color circle 
+      //     var col_status = row.insertCell(colIndex++);
+      //     col_status.innerHTML = '<div class ="foo orange"></div>'
+
+      //     col_status.setAttribute("class", "firstcol")
+
+      //     // insert following data 
+      //     var col_order_num = row.insertCell(colIndex++);
+      //     col_order_num.innerHTML = newItem.order_num;
+      //     col_order_num.setAttribute("contenteditable", false);
+      //     col_order_num.setAttribute("celltype", "order_num");  
+      //     var col_name = row.insertCell(colIndex++);
+      //     col_name.innerHTML = newItem.name;
+      //     col_name.setAttribute("contenteditable", false);
+      //     col_name.setAttribute("celltype", "name");
+      //     var col_address = row.insertCell(colIndex++);
+      //     col_address.innerHTML = newItem.address;
+      //     col_address.setAttribute("contenteditable", false);
+      //     col_address.setAttribute("celltype", "address");
+      //     var col_items = row.insertCell(colIndex++);
+      //     col_items.innerHTML = newItem.items;
+      //     col_items.setAttribute("contenteditable", false);
+      //     col_items.setAttribute("celltype", "item");
+      //     var col_weight = row.insertCell(colIndex++);
+      //     col_weight.innerHTML = newItem.weight;
+      //     col_weight.setAttribute("contenteditable", false);
+      //     col_weight.setAttribute("celltype", "weight");
+      //     var col_length = row.insertCell(colIndex++);
+      //     col_length.innerHTML = newItem.flength;
+      //     col_length.setAttribute("contenteditable", false);
+      //     col_length.setAttribute("celltype", "length");
+      //     var col_height = row.insertCell(colIndex++);
+      //     col_height.innerHTML = newItem.fheight;
+      //     col_height.setAttribute("contenteditable", false);
+      //     col_height.setAttribute("celltype", "height");
+      //     var col_width = row.insertCell(colIndex++);
+      //     col_width.innerHTML = newItem.fwidth;
+      //     col_width.setAttribute("contenteditable", false);
+      //     col_width.setAttribute("celltype", "width");
+      //     var col_deadline = row.insertCell(colIndex++);
+      //     col_deadline.innerHTML = newItem.deadline;
+      //     col_deadline.setAttribute("contenteditable", false);
+      //     col_deadline.setAttribute("celltype", "deadline");
+          
+
+      //     //insert shipping button
+      //     row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
+      //     'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genLabel()"}>Shipping Label </button>';
+
+      //     // insert pullout page button
+      //     row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
+      //     'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genSlip()"}>Insert Slip </button>';
+
+      //     // edit
+      //     row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="shipping" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+
+      //     // hidden key
+      //     var hidden_key = row.insertCell(colIndex++);
+      //     hidden_key.innerHTML = data.key();
+      //     hidden_key.style.display='none';
+
+      //     // calculate the days left 
+      //     var daysLeft = driver.getTimeLeft(newItem.deadline);
+      //     driver.updateStatus(col_status,daysLeft);
+      //   }); // FOR EACH
+      // });
+
+      // break;
       // -------------------------------------------------------------------------
-      // SHIPPING
+      // orders
       // -------------------------------------------------------------------------
+      // clear the table in case there's anything there
+      // get firebase stuff
       var shipRef = new Firebase(addr("shipping"));
 
-      shipRef.on("value", function(snapshot) {
+      makeTable = function(snapshot) {
+        document.getElementById("shippingTable-body").innerHTML = "";
         var table = document.getElementById("shippingTable-body");
+
         snapshot.forEach(function(data) {
           var newItem = data.val();
           var row = table.insertRow(0);
@@ -323,8 +406,7 @@ function loadFirebase(id){
           var col_status = row.insertCell(colIndex++);
           col_status.innerHTML = '<div class ="foo orange"></div>'
 
-          col_status.setAttribute("class", "firstcol")
-
+          // col_status.setAttribute("class", "firstcol")
           // insert following data 
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
@@ -341,52 +423,73 @@ function loadFirebase(id){
           var col_items = row.insertCell(colIndex++);
           col_items.innerHTML = newItem.items;
           col_items.setAttribute("contenteditable", false);
-          col_items.setAttribute("celltype", "item");
+          col_items.setAttribute("celltype", "items");
           var col_weight = row.insertCell(colIndex++);
           col_weight.innerHTML = newItem.weight;
           col_weight.setAttribute("contenteditable", false);
           col_weight.setAttribute("celltype", "weight");
+
           var col_length = row.insertCell(colIndex++);
-          col_length.innerHTML = newItem.flength;
+          col_length.innerHTML = newItem.length;
           col_length.setAttribute("contenteditable", false);
           col_length.setAttribute("celltype", "length");
+
           var col_height = row.insertCell(colIndex++);
-          col_height.innerHTML = newItem.fheight;
+          col_height.innerHTML = newItem.height;
           col_height.setAttribute("contenteditable", false);
           col_height.setAttribute("celltype", "height");
+
           var col_width = row.insertCell(colIndex++);
-          col_width.innerHTML = newItem.fwidth;
+          col_width.innerHTML = newItem.width;
           col_width.setAttribute("contenteditable", false);
           col_width.setAttribute("celltype", "width");
           var col_deadline = row.insertCell(colIndex++);
           col_deadline.innerHTML = newItem.deadline;
           col_deadline.setAttribute("contenteditable", false);
           col_deadline.setAttribute("celltype", "deadline");
-          
+          var col_shippingLabel = row.insertCell(colIndex++);
+          col_shippingLabel.innerHTML = newItem.shippingLabel;
+          col_shippingLabel.setAttribute("contenteditable", false);
+          col_shippingLabel.setAttribute("celltype", "shippingLabel");
+          var col_productInsert = row.insertCell(colIndex++);
+          col_productInsert.innerHTML = newItem.productInsert;
+          col_productInsert.setAttribute("contenteditable", false);
+          col_productInsert.setAttribute("celltype", "productInsert");
+          var col_completion = row.insertCell(colIndex++);
+          col_completion.innerHTML = newItem.completion;
+          col_completion.setAttribute("contenteditable", false);
+          col_completion.setAttribute("celltype", "completion");
 
-          //insert shipping button
-          row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
-          'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genLabel()"}>Shipping Label </button>';
-
-          // insert pullout page button
-          row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
-          'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genSlip()"}>Insert Slip </button>';
+          // // calculate the days left 
+          // var sortColindex = colIndex;
+          // var col_dayLeft = row.insertCell(colIndex++);
+          // col_dayLeft.setAttribute("style", "font-weight:bold");
+          var daysLeft = driver.getTimeLeft(newItem.deadline);
+          // col_dayLeft.innerHTML = daysLeft;
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" featureSrc="shipping" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm btn-info" onclick="driver.editEntry(event)"></button></button> <button class="glyphicon glyphicon-trash btn-sm btn-danger" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
           hidden_key.innerHTML = data.key();
           hidden_key.style.display='none';
 
-          // calculate the days left 
-          var daysLeft = driver.getTimeLeft(newItem.deadline);
+          // update
           driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-      });
 
+        tableObject = document.getElementById("shippingTable");
+        sorttable.makeSortable(tableObject);
+
+      } // makeTable
+      // if anything happens, reload
+      shipRef.on("value", makeTable);
+      // ordersRef.on("child_added", makeTable);
+      // ordersRef.on("child_changed", makeTable);
+      // ordersRef.on("child_removed", makeTable);
       break;
+
     case "tasks":
       var tasksRef = new Firebase(addr("tasks"));
       tasksRef.on("value", function(snapshot){
