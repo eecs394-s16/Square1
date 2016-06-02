@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Shipping Page</h1>
-            <div class="panel-body">       
-                <div class= "table-responsive">
-                    <table class="table dataTable" id = "ShippingTable">
+        <h1 class="page-header">Shipping</h1>
+           <div class="panel-body">
+             <div style="table-responsive">
+                <table id = "shippingTable" class="sortable table table-striped table-bordered table-hover dataTable no-footer dtr-inline">
                         <thead> 
                             <tr>
                                 <th> Status</th>
@@ -12,26 +12,33 @@
                                 <th> Address</th>
                                 <th> Item</th>
                                 <th> Weight</th>
+                                <th> Length</th>
+                                <th> Height</th>
+                                <th> Width</th>
                                 <th> Deadline</th>
                                 <th> Shipping Label</th>
                                 <th> Product Insert</th>
+                                <th> Complete? </th>
                                 <th style="display:none"> Hidden Key</th>
                             </tr>
                         </thead>
                         <tbody id = "shippingTable-body"></tbody>
                     </table>
                
-                    <form id = "new_shipping_entry" class ="form-inline inventory-form">
+               <!--      <form id = "new_shipping_entry" class ="form-inline inventory-form">
                         <input type ="number" class ="form-control"     id ="order_num_input" placeholder="Order Number">
                         <input type ="text" class ="form-control"       id ="name_input" placeholder="Name">
                         <input type ="text" class ="form-control"       id ="address_input" placeholder="Address">
                         <input type ="text" class ="form-control"       id ="items_input" placeholder="Items">
                         <input type ="date" class ="form-control"       id ="deadline_input" placeholder="Deadline">
+
+                        <input type ="number" class ="form-control"       id ="weight_input" placeholder="Deadline">
+
                         <button type ="button" class="btn btn-success"  id="add_to_firebase">Add</button>
                     </form>
-                
+                 -->
                     <div>
-                        <button id="add_item" class="btn btn-outline btn-info btn-block">Add Item to Inventory</button>
+                        <button id="add_item" class="btn btn-outline btn-info btn-block" onclick="driver.addEmptyItem(event)">Add Item to Inventory</button>
                     </div> <!-- button of add item-->
                 </div> <!-- button of add item-->
             </div>

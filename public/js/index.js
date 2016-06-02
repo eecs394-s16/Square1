@@ -284,7 +284,7 @@ function loadFirebase(id){
           col_dayLeft.innerHTML = daysLeft;
 
           // edit
-          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="orders" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
 
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
@@ -304,12 +304,14 @@ function loadFirebase(id){
           
           
     case "shipping":
-      case "shipping":
+     
       // -------------------------------------------------------------------------
       // SHIPPING
       // -------------------------------------------------------------------------
-      var shippingRef = new Firebase('https://square1.firebaseio.com/orders');
-      shippingRef.once("value", function(snapshot) {
+    var ordersRef = new Firebase(addr.orders);
+
+      makeTable = function(snapshot) {
+        document.getElementById("shippingTable-body").innerHTML = "";
         var table = document.getElementById("shippingTable-body");
 
         snapshot.forEach(function(data) {
@@ -320,34 +322,49 @@ function loadFirebase(id){
           // first create the status column with defult color circle 
           var col_status = row.insertCell(colIndex++);
           col_status.innerHTML = '<div class ="foo orange"></div>'
+
           col_status.setAttribute("class", "firstcol")
 
           // insert following data 
           var col_order_num = row.insertCell(colIndex++);
           col_order_num.innerHTML = newItem.order_num;
-          col_order_num.setAttribute("contenteditable", true);
+          col_order_num.setAttribute("contenteditable", false);
+          col_order_num.setAttribute("celltype", "order_num");  
           var col_name = row.insertCell(colIndex++);
           col_name.innerHTML = newItem.name;
-          col_name.setAttribute("contenteditable", true);
+          col_name.setAttribute("contenteditable", false);
+          col_name.setAttribute("celltype", "name");
           var col_address = row.insertCell(colIndex++);
           col_address.innerHTML = newItem.address;
-          col_address.setAttribute("contenteditable", true);
+          col_address.setAttribute("contenteditable", false);
+          col_address.setAttribute("celltype", "address");
           var col_items = row.insertCell(colIndex++);
           col_items.innerHTML = newItem.items;
-          col_items.setAttribute("contenteditable", true);
+          col_items.setAttribute("contenteditable", false);
+          col_items.setAttribute("celltype", "item");
+          var col_weight = row.insertCell(colIndex++);
+          col_weight.innerHTML = newItem.weight;
+          col_weight.setAttribute("contenteditable", false);
+          col_weight.setAttribute("celltype", "weight");
+          var col_length = row.insertCell(colIndex++);
+          col_length.innerHTML = newItem.flength;
+          col_length.setAttribute("contenteditable", false);
+          col_length.setAttribute("celltype", "length");
+          var col_height = row.insertCell(colIndex++);
+          col_height.innerHTML = newItem.fheight;
+          col_height.setAttribute("contenteditable", false);
+          col_height.setAttribute("celltype", "height");
+          var col_width = row.insertCell(colIndex++);
+          col_width.innerHTML = newItem.fwidth;
+          col_width.setAttribute("contenteditable", false);
+          col_width.setAttribute("celltype", "width");
           var col_deadline = row.insertCell(colIndex++);
           col_deadline.innerHTML = newItem.deadline;
-          col_deadline.setAttribute("contenteditable", true);
+          col_deadline.setAttribute("contenteditable", false);
+          col_deadline.setAttribute("celltype", "deadline");
+          
 
-          // calculate the days left 
-          var sortColindex = colIndex;
-          var col_dayLeft = row.insertCell(colIndex++);
-          col_dayLeft.setAttribute("style", "font-weight:bold");
-          var daysLeft = getTimeLeft(newItem.deadline);
-          col_dayLeft.innerHTML = daysLeft;
-
-
-          // insert shipping button
+          //insert shipping button
           row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
           'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genLabel()"}>Shipping Label </button>';
 
@@ -355,302 +372,25 @@ function loadFirebase(id){
           row.insertCell(colIndex++).innerHTML = '<button type="button" class="btn btn-info"' +
           'class="viewMore_btn" data-toggle="collapse" data-target="#demo" onclick="genSlip()"}>Insert Slip </button>';
 
+          // edit
+          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm" id="shipping" onclick="driver.editEntry(event)"></button></button><button class="glyphicon glyphicon-remove btn-sm" onclick="driver.deleteEntry(event)">'
+
           // hidden key
           var hidden_key = row.insertCell(colIndex++);
           hidden_key.innerHTML = data.key();
           hidden_key.style.display='none';
 
-          // according to daysleft to change the color of the circle in status columns
-          // but without completion check 
-          if (daysLeft == 0 ) {
-            col_status.innerHTML = '<div id = "redFilledCircle"></div>';
-
-            // to do check whether complete or not ------------------------
-          }
-          else if (daysLeft <= 7){
-            col_status.innerHTML = '<div id = "yellowFilledCircle"></div>';
-          }
-          else if (daysLeft > 7){
-            col_status.innerHTML = '<div id = "greenFilledCircle"></div>';
-          }
-          else {
-            col_status.innerHTML = '<div class ="foo orange"></div>';
-          }
-          // 
+          // update
+          driver.updateStatus(col_status,daysLeft);
         }); // FOR EACH
-        if (oTable != null){
-          oTable.destroy();
-        }
-
-        var oTable = $('#ShippingTable').DataTable({
-          "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
-          "order": [[6, 'asc']],
-          "columnDefs": [
-              {"targets": [0,7], "orderable": false}
-            ],
-          "sDom": '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f> '+
-                  '<"clearfix">>>t<"row view-filter"<"pull-left" i><"pull-right" p>>',
-          "pagingType": "full_numbers",
-          "bAutoWidth" : false,
-          "scrollX": true,
-          "scrollY": true,
-          "initComplete" : function () {
-            $('.dataTables_scrollBody thead tr').addClass('hidden');
-          },
-          paging: false,
-          searching: false
-          // "aoColumnDefs": [
-          //   { "sWidth": "10%", "aTargets": [ -1 ] }
-          // ]
-        });  // dataTable config  
-
-        // driver for editing datatable
-        var changeDataHashTable = [];
-        var editableArray = document.querySelector('#ShippingTable');
-        editableArray.addEventListener('keydown', function(e){
-          if (e.code=="Enter"){
-            // enter key is pressed, send data
-            // get text, index, index name, and firebase ID
-            var newData = e.target.innerText;
-            var FBKey = e.target.parentNode.lastChild.innerText;
-            var IndexCol = e.target.cellIndex;
-            var firebaseCol = document.querySelectorAll('#ShippingTable thead tr th')[IndexCol].innerText;
-            switch (firebaseCol){
-              case "Order#":
-                firebaseCol="order_num";
-                break;
-              case "Name": 
-                firebaseCol="name";    
-                break;
-              case "Address": 
-                firebaseCol="address"; 
-                break;
-              case "Items": 
-                firebaseCol="items";   
-                break;
-              case "Deadline":
-                firebaseCol="deadline";
-                break;
-            }
-            // send query
-            // create the object to send
-            objToSend = {};
-            objToSend[firebaseCol] = newData;
-            new Firebase('https://square1.firebaseio.com/orders/'+ FBKey).update(objToSend);
-            //move focus down
-            try {
-              // down
-              e.target.parentNode.nextSibling.children[IndexCol].focus();
-            }
-            catch(err) {
-              // can't move down
-              e.target.blur();
-            }
-          }  // if (enter)
-        }, false);  // keydown eventlistener
-
-       
-
-        // editable stuff
-        // when a cell loses focus, edit it/send to firebase
-        // $('td[contenteditable="true"]').bind("blur", function(){alert("lost focus");});
-
-        // show more details--------------------------------------------------------
-        function details(d){
-          return '<h4> Need more details for ' + d[2] + ' ! </h4>';
-        }
-
-        // Add event listener for opening and closing details
-        $('#ShippingTable-body').on('click', 'td .btn', function () {
-          var tr = $(this).closest('tr');
-          var row = oTable.row(tr);
-   
-          if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-          }
-          else {
-            // Open this row
-            row.child(details(row.data())).show();
-            tr.addClass('shown');
-          }
-        });
-      });  //end orderRef.once  
-      
-
-      // add item functionality -----------------------------------------
-      var ship_entry = document.getElementById('new_shipping_entry');
-      ship_entry.style.display='none';
-      var buttonID = document.getElementById("add_item");
-      var ifAddEntryBool = false;
-      buttonID.onclick = toggleAddEntryButton;
-
-      var addFirebase = document.getElementById("add_to_firebase");
-      addFirebase.onclick = function(){
-        shippingRef.push({
-          "order_num":    document.getElementById("order_num_input").value,
-          "name":         document.getElementById("name_input").value,
-          "address":      document.getElementById("address_input").value,
-          "items":        document.getElementById("items_input").value,
-          "deadline":     document.getElementById("deadline_input").value,
-        });
-        // showNewItem();;
-        toggleAddEntryButton();
-        clearFormInputs();
-        // $('#page-wrapper').load('pages/orders.html');
-        load("orders");
-      } // addFirebase
-      //----------------------------function -------------------------------
-
-      function toggleAddEntryButton(){
-        if (ifAddEntryBool){
-          ship_entry.style.display='none';
-          document.getElementById("add_item").innerHTML = "Add Item to Inventory";
-          ifAddEntryBool = false; 
-        }
-        else {
-          ship_entry.style.display='block';
-          document.getElementById("add_item").innerHTML = "Cancel";
-          ifAddEntryBool = true;
-        }
       }
-
-      function clearFormInputs(){
-        document.getElementById("order_num_input").value = "";
-        document.getElementById("name_input").value = "";
-        document.getElementById("address_input").value = "";
-        document.getElementById("items_input").value = "";
-        document.getElementById("deadline_input").value = "";
-      }
-
-      function getTimeLeft(deadline){
-        var dateObj = new Date(deadline);  // convert string to date object 
-
-        var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-        var firstDate = dateObj;
-        var secondDate = new Date();
-
-        var diffDays = Math.round((firstDate.getTime() - secondDate.getTime())/(oneDay));
-        if (diffDays <= 0)
-          diffDays = 0;
-
-        return diffDays;
-      }
-
-    function genLabel(){
-      var path    = require("path");
-      console.log(__dirname);
-
-      app.get('/',function(req,res){
-        res.sendFile(path.join(__dirname+'/shipping.html'));
-        console.log(__dirname);
-        //__dirname : It will resolve to your project folder.
-      });
-
-
-      app.listen(3000);
-
-      console.log("Running at Port 3000");
-
-      var apiKey = '5NTaCzvLSV1MnYPbNpwxOg';
-      var easypost = require('node-easypost')(apiKey);
-
-      // set addresses
-      var toAddress = {
-          name: document.getElementById("name_input").value,
-          street1: document.getElementById("address_input").value,
-          city: "Redondo Beach",
-          state: "CA",
-          zip: "90277",
-          country: "US",
-          phone: "310-808-5243"
-      };
-      var fromAddress = {
-          name: "Square1",
-          street1: "The Garage",
-          street2: "4th Floor",
-          city: "Evanston",
-          state: "Il",
-          zip: "60201",
-          phone: "415-123-4567"
-      };
-
-      // verify address
-      easypost.Address.create(fromAddress, function(err, fromAddress) {
-          fromAddress.verify(function(err, response) {
-              if (err) {
-                  console.log('Address is invalid.');
-              } else if (response.message !== undefined && response.message !== null) {
-                  console.log('Address is valid but has an issue: ', response.message);
-                  var verifiedAddress = response.address;
-              } else {
-                  var verifiedAddress = response;
-              }
-          });
-      });
-
-      // set parcel
-      easypost.Parcel.create({
-          predefined_package: "InvalidPackageName",
-          weight: 21.2
-      }, function(err, response) {
-          console.log(err);
-      });
-
-      var parcel = {
-          length: 10.2,
-          width: 7.8,
-          height: 4.3,
-          weight: 21.2
-      };
-
-      // create customs_info form for intl shipping
-      var customsItem = {
-          description: "Audiovert Speaker",
-          hs_tariff_number: 123456,
-          origin_country: "US",
-          quantity: 2,
-          value: 96.27,
-          weight: 21.1
-      };
-
-      // var customsInfo = {
-      //     customs_certify: 1,
-      //     customs_signer: "Hector Hammerfall",
-      //     contents_type: "gift",
-      //     contents_explanation: "",
-      //     eel_pfc: "NOEEI 30.37(a)",
-      //     non_delivery_option: "return",
-      //     restriction_type: "none",
-      //     restriction_comments: "",
-      //     customs_items: [customsItem]
-      // };
-      var postage_label;
-
-      // create shipment
-      easypost.Shipment.create({
-          to_address: toAddress,
-          from_address: fromAddress,
-          parcel: parcel,
-          customs_info: customsInfo
-      }, function(err, shipment) {
-          // buy postage label with one of the rate objects
-          shipment.buy({rate: shipment.lowestRate(['USPS', 'ups', 'Fedex']), insurance: 100.00}, function(err, shipment) {
-              console.log(shipment.tracking_code);
-              console.log(shipment.postage_label.label_url);
-              postage_label = shipment.postage_label.label_url;
-
-          });
-      });
-    }
-    function getSlip(){
-      document.write(5+6);
-    }
-
+      // if anything happens, reload
+      ordersRef.on("value", makeTable);
+      ordersRef.on("child_added", makeTable);
+      ordersRef.on("child_changed", makeTable);
+      ordersRef.on("child_removed", makeTable);
       break;
-      break;
-          
+  
       case "tasks":
           var tasksRef = new Firebase('https://square1.firebaseio.com/tasks');
           //              tasksRef.set({
@@ -850,6 +590,26 @@ driver = {
               domToReplace.parentElement.insertBefore(newDom, domToReplace);
               domToReplace.parentElement.removeChild(domToReplace);
               tdArr[i].innerHTML = "<strong>mm/dd/yyyy</strong>";
+              break
+            case "weight":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>weight</strong>";
+              }
+              break 
+            case "length":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>length</strong>";
+              }
+              break 
+            case "height":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>height</strong>";
+              }
+              break 
+            case "width":
+              if (tdArr[i]==""){
+                tdArr[i].innerHTML = "<strong>width</strong>";
+              }
               break 
           }
         }
@@ -865,91 +625,183 @@ driver = {
         break;
 
       case "glyphicon glyphicon-ok btn-sm":
-        // editable -> uneditable
-        // send to firebase
-        // reload
+         switch (e.target.getAttribute("id")){
+          case "orders":
+            // editable -> uneditable
+            // send to firebase
+            // reload
 
-        // console.log("testing");
-        // make uneditable
-        tdArr = e.target.parentElement.parentElement.children;
-        for (var i=0; i<tdArr.length; i++){
-          if (tdArr[i].getAttribute("contenteditable") != null){
-            tdArr[i].setAttribute("contenteditable", false);
-          }
-        }
-        // change button
-        e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
-        e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
-
-        // send to firebase 
-        entry_key = e.target.parentNode.parentNode.lastChild.innerText;
-        entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
-
-        // get all data with false contenteditable
-        dataToSend = {};
-        // row data is an object
-        $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
-          $(this).find('td').each(function() {
-            if (this.cellIndex == 5) {
-              // this is pointing to daysleft column
-              // deadline column update daysLeftColumn
-              this.innerText = driver.getTimeLeft(this.previousSibling.value);
-              driver.updateStatus(this.parentNode.firstChild, this.innerText);
-            }
-
-            if (this.hasAttribute("contenteditable")) {
-              colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
-              switch (colName){
-                case "Order#":
-                  headerText="order_num";
-                  data = this.innerText;
-                  break;
-                case "Name": 
-                  headerText="name";   
-                  data = this.innerText; 
-                  break;
-                case "Address": 
-                  headerText="address"; 
-                  data = this.innerText; 
-                  break;
-                case "Items": 
-                  headerText="items";  
-                  data = this.innerText; 
-                  break;
-                // default:
+            // console.log("testing");
+            // make uneditable
+            tdArr = e.target.parentElement.parentElement.children;
+            for (var i=0; i<tdArr.length; i++){
+              if (tdArr[i].getAttribute("contenteditable") != null){
+                tdArr[i].setAttribute("contenteditable", false);
               }
-
-
-              dataToSend[headerText] = data;
             }
+            // change button
+            e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
+            e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
 
-          deadlineCol = $('#ordersTable').find('input').val();
-            if (deadlineCol){
-              headerText = "deadline";
-              data = deadlineCol;
+            // send to firebase 
+            entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+            entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
 
-              dataToSend[headerText] = data;
+            // get all data with false contenteditable
+            dataToSend = {};
+            // row data is an object
+            $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
+              $(this).find('td').each(function() {
+                if (this.cellIndex == 5) {
+                  // this is pointing to daysleft column
+                  // deadline column update daysLeftColumn
+                  this.innerText = driver.getTimeLeft(this.previousSibling.value);
+                  driver.updateStatus(this.parentNode.firstChild, this.innerText);
+                }
+
+                if (this.hasAttribute("contenteditable")) {
+                  colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
+                  switch (colName){
+                    case "Order#":
+                      headerText="order_num";
+                      data = this.innerText;
+                      break;
+                    case "Name": 
+                      headerText="name";   
+                      data = this.innerText; 
+                      break;
+                    case "Address": 
+                      headerText="address"; 
+                      data = this.innerText; 
+                      break;
+                    case "Items": 
+                      headerText="items";  
+                      data = this.innerText; 
+                      break;
+                    // default:
+                  }
+
+
+                  dataToSend[headerText] = data;
+                }
+
+              deadlineCol = $('#ordersTable').find('input').val();
+                if (deadlineCol){
+                  headerText = "deadline";
+                  data = deadlineCol;
+
+                  dataToSend[headerText] = data;
+                }
+              });// each td find contenteditable
+            }); // find row of the event happens
+
+            // console.log(dataToSend);
+
+            var ordersRef = new Firebase(addr.orders + entry_key);
+            ordersRef.update(dataToSend);
+
+            // change style
+            e.target.parentElement.parentElement.style.backgroundColor = "";
+            // change arianas stupid input thing 
+            tdArr = e.target.parentElement.parentElement.children;
+            for (i in tdArr){
+              if (tdArr[i].getAttribute){
+                if (tdArr[i].getAttribute("celltype")=="deadline"){
+                  tdArr[i].style.backgroundColor = "";
+                }            
+              }
             }
-          });// each td find contenteditable
-        }); // find row of the event happens
+            break;
 
-        // console.log(dataToSend);
+          case "shipping":
+          // editable -> uneditable
+            // send to firebase
+            // reload
 
-        var ordersRef = new Firebase(addr.orders + entry_key);
-        ordersRef.update(dataToSend);
+            // console.log("testing");
+            // make uneditable
+            tdArr = e.target.parentElement.parentElement.children;
+            for (var i=0; i<tdArr.length; i++){
+              if (tdArr[i].getAttribute("contenteditable") != null){
+                tdArr[i].setAttribute("contenteditable", false);
+              }
+            }
+            // change button
+            e.target.setAttribute("class", "glyphicon glyphicon-edit btn-sm");
+            e.target.parentElement.lastChild.setAttribute("class", "glyphicon glyphicon-remove btn-sm");
 
-        // change style
-        e.target.parentElement.parentElement.style.backgroundColor = "";
-        // change arianas stupid input thing 
-        tdArr = e.target.parentElement.parentElement.children;
-        for (i in tdArr){
-          if (tdArr[i].getAttribute){
-            if (tdArr[i].getAttribute("celltype")=="deadline"){
-              tdArr[i].style.backgroundColor = "";
-            }            
-          }
-        }
-        break;
+            // send to firebase 
+            entry_key = e.target.parentNode.parentNode.lastChild.innerText;
+            entry_rowIndex = e.target.parentNode.parentNode.rowIndex - 1;  // Index starts 0
+
+            // get all data with false contenteditable
+            dataToSend = {};
+            // row data is an object
+            $("#ordersTable-body").find('tr:eq(' + entry_rowIndex +')').each(function() {
+              $(this).find('td').each(function() {
+                if (this.cellIndex == 5) {
+                  // this is pointing to daysleft column
+                  // deadline column update daysLeftColumn
+                  this.innerText = driver.getTimeLeft(this.previousSibling.value);
+                  driver.updateStatus(this.parentNode.firstChild, this.innerText);
+                }
+
+                if (this.hasAttribute("contenteditable")) {
+                  colName = $('#ordersTable').find('th').eq(this.cellIndex).text().trim();
+                  switch (colName){
+                    case "Order#":
+                      headerText="order_num";
+                      data = this.innerText;
+                      break;
+                    case "Name": 
+                      headerText="name";   
+                      data = this.innerText; 
+                      break;
+                    case "Address": 
+                      headerText="address"; 
+                      data = this.innerText; 
+                      break;
+                    case "Items": 
+                      headerText="items";  
+                      data = this.innerText; 
+                      break;
+                    // default:
+                  }
+
+
+                  dataToSend[headerText] = data;
+                }
+
+              deadlineCol = $('#ordersTable').find('input').val();
+                if (deadlineCol){
+                  headerText = "deadline";
+                  data = deadlineCol;
+
+                  dataToSend[headerText] = data;
+                }
+              });// each td find contenteditable
+            }); // find row of the event happens
+
+            // console.log(dataToSend);
+
+            var ordersRef = new Firebase(addr.orders + entry_key);
+            ordersRef.update(dataToSend);
+
+            // change style
+            e.target.parentElement.parentElement.style.backgroundColor = "";
+            // change arianas stupid input thing 
+            tdArr = e.target.parentElement.parentElement.children;
+            for (i in tdArr){
+              if (tdArr[i].getAttribute){
+                if (tdArr[i].getAttribute("celltype")=="deadline"){
+                  tdArr[i].style.backgroundColor = "";
+                }            
+              }
+            }
+            break;
+
+      }
+      break;
     }
   },
   
@@ -962,6 +814,10 @@ driver = {
       "address":    "",
       "items":      "",
       "deadline":   "",
+      "weight":     "",
+      "height":     "",
+      "width":      "",
+      "length":      "",
     });
     // make sure it's loaded from firebase back to page
     // load("orders");
@@ -990,6 +846,115 @@ driver = {
         domToReplace.parentElement.removeChild(domToReplace);
         break
     }
+  },
+
+  makeLabel: function(e){
+      // if 
+      var path    = require("path");
+      console.log(__dirname);
+
+      app.get('/',function(req,res){
+        res.sendFile(path.join(__dirname+'/shipping.html'));
+        console.log(__dirname);
+        //__dirname : It will resolve to your project folder.
+      });
+
+
+      app.listen(3000);
+
+      console.log("Running at Port 3000");
+
+      var apiKey = '5NTaCzvLSV1MnYPbNpwxOg';
+      var easypost = require('node-easypost')(apiKey);
+
+      // set addresses
+      var toAddress = {
+          name: document.getElementById("name_input").value,
+          street1: document.getElementById("address_input").value,
+          city: "Redondo Beach",
+          state: "CA",
+          zip: "90277",
+          country: "US",
+          phone: "310-808-5243"
+      };
+      var fromAddress = {
+          name: "Square1",
+          street1: "The Garage",
+          street2: "4th Floor",
+          city: "Evanston",
+          state: "Il",
+          zip: "60201",
+          phone: "415-123-4567"
+      };
+
+      // verify address
+      easypost.Address.create(fromAddress, function(err, fromAddress) {
+          fromAddress.verify(function(err, response) {
+              if (err) {
+                  console.log('Address is invalid.');
+              } else if (response.message !== undefined && response.message !== null) {
+                  console.log('Address is valid but has an issue: ', response.message);
+                  var verifiedAddress = response.address;
+              } else {
+                  var verifiedAddress = response;
+              }
+          });
+      });
+
+      // set parcel
+      easypost.Parcel.create({
+          predefined_package: "InvalidPackageName",
+          weight: 21.2
+      }, function(err, response) {
+          console.log(err);
+      });
+
+      var parcel = {
+          length: 10.2,
+          width: 7.8,
+          height: 4.3,
+          weight: 21.2
+      };
+
+      // // create customs_info form for intl shipping
+      // var customsItem = {
+      //     description: "Audiovert Speaker",
+      //     hs_tariff_number: 123456,
+      //     origin_country: "US",
+      //     quantity: 2,
+      //     value: 96.27,
+      //     weight: 21.1
+      // };
+
+      // var customsInfo = {
+      //     customs_certify: 1,
+      //     customs_signer: "Hector Hammerfall",
+      //     contents_type: "gift",
+      //     contents_explanation: "",
+      //     eel_pfc: "NOEEI 30.37(a)",
+      //     non_delivery_option: "return",
+      //     restriction_type: "none",
+      //     restriction_comments: "",
+      //     customs_items: [customsItem]
+      // };
+      var postage_label;
+
+      // create shipment
+      easypost.Shipment.create({
+          to_address: toAddress,
+          from_address: fromAddress,
+          parcel: parcel,
+          customs_info: customsInfo
+      }, function(err, shipment) {
+          // buy postage label with one of the rate objects
+          shipment.buy({rate: shipment.lowestRate(['USPS', 'ups', 'Fedex']), insurance: 100.00}, function(err, shipment) {
+              console.log(shipment.tracking_code);
+              console.log(shipment.postage_label.label_url);
+              postage_label = shipment.postage_label.label_url;
+
+          });
+      });
+   
   },
 }
 
