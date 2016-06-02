@@ -298,7 +298,6 @@ function loadFirebase(id){
 
         tableObject = document.getElementById("ordersTable");
         sorttable.makeSortable(tableObject);
-
       } // makeTable
       // if anything happens, reload
       ordersRef.on("value", makeTable);
