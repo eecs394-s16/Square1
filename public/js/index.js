@@ -356,51 +356,51 @@ function loadFirebase(id){
       // ordersRef.on("child_removed", makeTable);
       break;
     case "tasks":
-      var tasksRef = new Firebase(addr("tasks"));
+      var tasksRef = new Firebase(addr("orders"));
       tasksRef.on("value", function(snapshot){
-        var table = document.getElementById("taskTable");
+        var table = document.getElementById("taskTable-body");
         snapshot.forEach(function(data){
           var newItem = data.val();
           var row = table.insertRow(0);
-          cell0 = row.insertCell(0);
-          cell0.setAttribute('contenteditable',false);
-          cell1 = row.insertCell(1);
+          var colIndex = 0;
+          cell0 = row.insertCell(colIndex++);
+          cell0.setAttribute("class","firstcol");
+          cell1 = row.insertCell(colIndex++);
           cell1.setAttribute('contenteditable',false);
-          cell2 = row.insertCell(2);
+          cell2 = row.insertCell(colIndex++);
           cell2.setAttribute('contenteditable',false);
-          cell3 = row.insertCell(3);
+          cell3 = row.insertCell(colIndex++);
           cell3.setAttribute('contenteditable',false);
-          cell4 = row.insertCell(4);
+          cell4 = row.insertCell(colIndex++);
           cell4.setAttribute('contenteditable',false);
-          cell5 = row.insertCell(5);
-          cell4.setAttribute('contenteditable',false);
-          cell6 = row.insertCell(6);
+          cell5 = row.insertCell(colIndex++);
+          cell5.setAttribute('contenteditable',false);
+          cell6 = row.insertCell(colIndex++);
+          cell6.setAttribute('contenteditable',false);
           
+          //Default status
           cell0.innerHTML = '<div class ="foo orange"></div>'
-          cell1.innerHTML = newItem.Order
-          cell2.innerHTML = newItem.Item;
-          cell3.innerHTML = newItem.location;
-          cell4.innerHTML = newItem.next_task;
-          cell5.innerHTML = newItem.team_member;
-          cell6.innerHTML = ' <button class="btn btn-secondary">Next</button>'
+          
+          cell1.innerHTML = newItem.order_num;
+          cell2.innerHTML = newItem.items;
+          cell3.innerHTML = newItem.Location;
+          cell4.innerHTML = newItem.task.task1.description;
+          cell5.innerHTML = newItem.task.task1.team_member;
+          cell6.innerHTML = ' <button class="btn btn-secondary" id="next_task">Next</button>';
+            
+          var daysLeft = driver.getTimeLeft(newItem.deadline);
+          driver.updateStatus(cell0,daysLeft,"orders");
+          
+//          row.insertCell(colIndex++).innerHTML = '<button class="glyphicon glyphicon-edit btn-sm btn-info" featureSrc="orders" onclick="driver.editEntry(event)">'
+          document.getElementById("next_task").onclick = displayNextTask;
+          
+          function displayNextTask(){
+              
+          }
+
+          
         })
-        
-        document.getElementById("new_task_entry").style.display='none';
-        var buttonID = document.getElementById("add_item");
-        buttonID.onclick = function(){
-          document.getElementById("new_task_entry").style.display='block';
-        }
-        
-        var addTask = document.getElementById("add_to_firebase");
-        addTask.onclick = function(){
-          tasksRef.push({
-            Order:document.getElementById("order_input").value,
-            Item:document.getElementById("item_input").value,
-            location:document.getElementById("location_input").value,
-            next_task:document.getElementById("nextTask_input").value,
-            team_member:document.getElementById("member_input").value    
-          })
-        }      
+              
       })
       break;
     default:
@@ -628,6 +628,7 @@ driver = {
   editEntry: function(e){
     featureSource = document.getElementById("featureSrc").getAttribute("featureSrc");
     switch (featureSource){
+      ////////////////////////////////////////////////////////////////////////////////////
       case "orders":
         switch (e.target.getAttribute("class")){
           case "glyphicon glyphicon-edit btn-sm btn-info":
