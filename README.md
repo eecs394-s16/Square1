@@ -1,27 +1,35 @@
-# [Start Bootstrap](http://startbootstrap.com/) - [SB Admin 2](http://startbootstrap.com/template-overviews/sb-admin-2/)
+#Description
+Square1 is a simple application that helps users easily manage the production of their products. 
+The website can be found at square1.firebase.com.
 
-[SB Admin 2](http://startbootstrap.com/template-overviews/sb-admin-2/) is an open source, admin dashboard template for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/).
 
-## Getting Started
+Square1 is 
+	• built with Bootstrap  and Javascript 
+	• Firebase database to store information. 
+	• Code currently hosted on Firebase static-page
+	• It calls on the Node.js EasyPost API to automatically create shipping labels and pay for them. 
 
-To begin using this template, choose one of the following options to get started:
-* [Download the latest release on Start Bootstrap](http://startbootstrap.com/template-overviews/sb-admin-2/)
-* Clone the repo: `git clone https://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git`
-* Fork the repo
 
-## Bugs and Issues
 
-Have a bug or an issue with this template? [Open a new issue](https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/issues) here on GitHub or leave a comment on the [template overview page at Start Bootstrap](http://startbootstrap.com/template-overviews/sb-admin-2/).
+#To still finish: 
+	• Complete integration of the shipping page onto the actual website. 
+	• Deploy to a non-static server (e.g. Heroku, versus the current Firebase)
+	
 
-## Creator
+#Installing
+##To download this application: 
+	Open terminal or Command Line.
+	Navigate to the folder you want the code to be in. 
+	Enter the command: git clone https://github.com/eecs394-s16/square1.git
+	
+##To deploy the website to Firebase after making changes: 
+	Navigate to root directory
+	Run 
 
-Start Bootstrap was created by and is maintained by **[David Miller](http://davidmiller.io/)**, Owner of [Blackrock Digital](http://blackrockdigital.io/).
-
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
-
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
-
-## Copyright and License
-
-Copyright 2013-2016 Blackrock Digital LLC. Code released under the [MIT](https://github.com/BlackrockDigital/startbootstrap-sb-admin-2/blob/gh-pages/LICENSE) license.
+##Running the shipping page
+	Install node.js
+	Navigate to folder containing shipping.js via command line
+	Run $Node index.js
+	
+		
+	
