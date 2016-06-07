@@ -11,6 +11,10 @@
   background: #13b4ff;
 }
 
+.grey {
+  background: #C7C7C7;
+}
+
 .green {
   background: #008000;
 }
@@ -69,23 +73,57 @@
   border-radius: 25px;
   background: orange;
 }
-table thead {
-   background-color: #e6e6e6;
+
+#greyFilledCircle {
+  width: 25px;
+  height: 25px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  border-radius: 25px;
+  background: #C7C7C7;
+}
+
+#ordersTable table thead {
+  background-color: #e6e6e6;
+}
+#ordersTable thead {
+  background-color: #e6e6e6;
+}
+
+#myTable table thead {
+  background-color: #e6e6e6;
+}
+#myTable thead {
+  background-color: #e6e6e6;
+}
+
+#tasksTable table thead {
+  background-color: #e6e6e6;
+}
+#tasksTable thead {
+  background-color: #e6e6e6;
+}
+
+#shippingTable table thead {
+  background-color: #e6e6e6;
+}
+#shippingTable thead {
+  background-color: #e6e6e6;
 }
 
 .paging_full_numbers .ui-button {
-padding: 2px 6px;
-margin: 0;
-cursor: pointer;
-* cursor: hand;
+  padding: 2px 6px;
+  margin: 0;
+  cursor: pointer;
+  * cursor: hand;
 }
 
 .glyphic-red{
-    color:red;
+  color:red;
 }
 
 .glyphic-green{
-    color:green;
+  color:green;
 }
 
 .glyphic-cadetblue{
@@ -94,4 +132,14 @@ cursor: pointer;
 
 .highlight {
    background-color: #a8cb17;
+}
+
+.navbar-brand {
+  font-size: 36px;
+  font-weight: bolder; 
+}
+
+#side-menu li{
+  font-size: 18px;
+  font-weight: bold;
 }

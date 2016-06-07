@@ -1,19 +1,19 @@
-<div class="row">
+<div class="row" id="featureSrc" featureSrc="orders">
     <div class="col-lg-12">
         <h1 class="page-header">Orders</h1>
            <div class="panel-body">
              <div style="table-responsive">
-                <table id = "ordersTable" class="sortable table table-striped table-bordered table-hover dataTable no-footer dtr-inline">
+                <table id = "ordersTable" class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline">
                     <thead> 
                         <tr>
-                            <th> Status</th>
+                            <th class="sorttable_nosort"> Status</th>
                             <th> Order#    </div></th>
                             <th> Name      </div></th>
                             <th> Address   </div></th>
                             <th> Items     </div></th>
                             <th> Deadline  </div></th>
                             <th> Time Left (Days) </div></th>   
-                            <th> Edit</th>
+                            <th class="sorttable_nosort"> Edit</th>
                             <th style="display:none"> Hidden Key</th> 
                         </tr>
                     </thead>
@@ -21,36 +21,23 @@
                     <tbody id = "ordersTable-body">
                     </tbody>
                 </table>
-<!--                 <table class="sortable">
+          <!--       <table class="sortable" id = "testtable">
                     <thead>
-                        <tr>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>4</th>
-                            <th>5</th>
-                        </tr>
+                      <tr><th>Person</th><th>Monthly pay</th></tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                        </tr>
-                        <tr>
-                            <td>11</td>
-                            <td>12</td>
-                            <td>13</td>
-                            <td>14</td>
-                            <td>15</td>
-                        </tr>
+                      <tr><td>Jan Molby</td><td>£12,000</td></tr>
+                      <tr><td>Steve Nicol</td><td>£8,500</td></tr>
+                      <tr><td>Steve McMahon</td><td>£9,200</td></tr>
+                      <tr><td>John Barnes</td><td>£15,300</td></tr>
                     </tbody>
+                    <tfoot>
+                      <tr><td>TOTAL</td><td>£45,000</td></tr>
+                    </tfoot>
                 </table> -->
                 
                 <div>
-                    <button id="add_item" class="btn btn-outline btn-info btn-block" onclick="driver.addEmptyItem(event)">Add Item to Inventory</button>
+                  <button id="add_item" class="glyphicon glyphicon-plus btn btn-outline btn-info btn-block" onclick="driver.addEmptyItem(event)"></button>
                 </div> <!-- button of add item-->
              </div> <!-- table responsive-->
            </div>  <!-- panel body-->
