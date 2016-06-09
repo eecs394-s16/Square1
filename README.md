@@ -4,33 +4,41 @@ The website can be found at square1.firebase.com.
 
 
 Square1 is: 
-*Built with Bootstrap  and Javascript 
-*Firebase database to store information. 
-*Code currently hosted on Firebase static-page
-*It calls on the Node.js EasyPost API to automatically create shipping labels and pay for them. 
+* Built with Bootstrap  and Javascript 
+* Firebase database to store information. 
+* Code currently hosted on Firebase static-page
+* It calls on the Node.js EasyPost API to automatically create shipping labels and pay for them. 
 
 
 
 #To still finish: 
-*Complete integration of the shipping page onto the actual website. 
-*Deploy to a non-static server (e.g. Heroku, versus the current Firebase)
+* Complete integration of the shipping page onto the actual website. 
+* Deploy to a non-static server (e.g. Heroku, versus the current Firebase)
 	
 
 #Installing
 ##To download this application: 
-*Open terminal or Command Line.
-*Navigate to the folder you want the code to be in. 
-*Enter the command: 
-	git clone https://github.com/eecs394-s16/square1.git
+* Open terminal or Command Line.
+* Navigate to the folder you want the code to be in. 
+* Run the following command: 
+	
+		git clone https://github.com/eecs394-s16/square1.git
 	
 ##To deploy the website to Firebase after making changes: 
-	Navigate to root directory
-	Run 
+* Navigate to root directory
+* Run the following command:
+
+		$ npm install -g firebase-tools
+		$ firebase deploy
+For other inquires on deploying to Firebase, refer here:
+https://www.firebase.com/docs/hosting/command-line-tool.html
 
 ##Running the shipping page
-	Install node.js
-	Navigate to folder containing shipping.js via command line
-	Run $Node index.js
+* Install node.js
+* Navigate to folder containing shipping.js via command line
+* Run the following command:
+ 
+		$Node index.js
 	
 		
 	
