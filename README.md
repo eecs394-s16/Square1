@@ -1,15 +1,6 @@
 ![alt tag](https://raw.githubusercontent.com/eecs394-s16/Square1/master/readme/title.png)
 # Live Demo
 square1.firebase.com.
-# Shipping Page Demo
-If Node.js isn't installed
-```sh
-sudo apt-get install nodejs
-```
-in the folder containing shipping.js
-```sh
-node shipping.js
-```
 # Installation and Setup
 Clone the repository and install necessary packages
 ```sh
