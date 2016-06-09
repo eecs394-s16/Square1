@@ -301,9 +301,13 @@ function loadFirebase(id){
 
 
           var col_shippingLabel = row.insertCell(colIndex++);
+          //uncomment next line to generate shipping labels
+          //var label = driver.makeLabel(newItem.name, newItem.address,newItem.weight,newItem.length,newItem.height, newItem.width );
+          //replace this # after href with var label to link to the shipping label
           col_shippingLabel.innerHTML = '<a href="#" "="" style="text-decoration:none"> <button class="btn btn-secondary">Make Label</button></a>';
           // col_shippingLabel.setAttribute("contenteditable", false);
           col_shippingLabel.setAttribute("celltype", "shippingLabel");
+          
           var col_productInsert = row.insertCell(colIndex++);
           col_productInsert.innerHTML = '<a href="#" "="" style="text-decoration:none"> <button class="btn btn-secondary">Make Label</button></a>';
           // col_productInsert.setAttribute("contenteditable", false);
@@ -1069,34 +1073,14 @@ driver = {
     var remRef = new Firebase(urlprefix + entry_key);
     remRef.remove();
   },
-  makeLabel: function(e){
-    // if 
-    var path    = require("path");
-    console.log(__dirname);
-
-    app.get('/',function(req,res){
-      res.sendFile(path.join(__dirname+'/shipping.html'));
-      console.log(__dirname);
-      //__dirname : It will resolve to your project folder.
-    });
-
-
-    app.listen(3000);
-
-    console.log("Running at Port 3000");
-
+  makeLabel: function(name_i, address_i, weight_i, length_i, height_i, width_i){
     var apiKey = '5NTaCzvLSV1MnYPbNpwxOg';
     var easypost = require('node-easypost')(apiKey);
 
     // set addresses
     var toAddress = {
-      name: document.getElementById("name_input").value,
-      street1: document.getElementById("address_input").value,
-      city: "Redondo Beach",
-      state: "CA",
-      zip: "90277",
-      country: "US",
-      phone: "310-808-5243"
+      name: name_i,
+      address: address_i
     };
     var fromAddress = {
       name: "Square1",
@@ -1125,16 +1109,16 @@ driver = {
     // set parcel
     easypost.Parcel.create({
       predefined_package: "InvalidPackageName",
-      weight: 21.2
+      weight: weight_i
     }, function(err, response) {
       console.log(err);
     });
 
     var parcel = {
-      length: 10.2,
-      width: 7.8,
-      height: 4.3,
-      weight: 21.2
+      length: length_i,
+      width: width_i,
+      height: height_i,
+      weight: weight_i
     };
 
     var postage_label;
@@ -1147,9 +1131,19 @@ driver = {
       customs_info: customsInfo
     }, function(err, shipment) {
       // buy postage label with one of the rate objects
-      shipment.buy({rate: shipment.lowestRate(['USPS', 'ups', 'Fedex']), insurance: 100.00}, function(err, shipment) {
+      shipment.buy({rate: shipment.lowestRate(['USPS', 'ups']), insurance: 100.00}, function(err, shipment) {
         console.log(shipment.tracking_code);
         console.log(shipment.postage_label.label_url);
+        postage_label = shipment.postage_label.label_url;
+      });
+    });
+  return postage_label
+  },
+  logout: function(e){
+
+    globalref.unauth();
+  },
+}.label_url);
         postage_label = shipment.postage_label.label_url;
       });
     });
