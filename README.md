@@ -2,13 +2,13 @@
 # Live Demo
 square1.firebase.com.
 # Shipping Page Demo
-If Node.js isn't sintalled
+If Node.js isn't installed
 ```sh
 sudo apt-get install nodejs
 ```
 in the folder containing shipping.js
 ```sh
-node index.js
+node shipping.js
 ```
 # Installation and Setup
 Clone the repository and install necessary packages
