@@ -1,4 +1,4 @@
-![alt tag](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+![alt tag](https://raw.githubusercontent.com/eecs394-s16/Square1/master/readme/title.png)
 # Live Demo
 square1.firebase.com.
 # Shipping Page Demo
