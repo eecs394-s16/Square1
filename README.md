@@ -12,7 +12,8 @@ Square1 is:
 
 
 #To still finish: 
-* Complete integration of the shipping page onto the actual website. 
+* Complete integration of the shipping page onto the actual website
+* * To do this, the app needs to be converted to Node.js.
 * Deploy to a non-static server (e.g. Heroku, versus the current Firebase)
 	
 
@@ -26,9 +27,11 @@ Square1 is:
 	
 ##To deploy the website to Firebase after making changes: 
 * Navigate to root directory
-* Run the following command:
+* If it's your first time deploying to firebase, run the following command:
 
 		$ npm install -g firebase-tools
+*Always run this command:
+
 		$ firebase deploy
 For other inquires on deploying to Firebase, refer here:
 https://www.firebase.com/docs/hosting/command-line-tool.html
