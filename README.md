@@ -1,47 +1,36 @@
-#Description
-Square1 is a simple application that helps users easily manage the production of their products. 
-The website can be found at square1.firebase.com.
+![alt tag](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+# Live Demo
+square1.firebase.com.
+# Shipping Page Demo
+If Node.js isn't sintalled
+```sh
+sudo apt-get install nodejs
+```
+in the folder containing shipping.js
+```sh
+node index.js
+```
+# Installation and Setup
+Clone the repository and install necessary packages
+```sh
+git clone https://github.com/eecs394-s16/Square1.git
+cd Square1
+sudo ./setup.sh
+```
+## Live Deployment 
+in the Square1/ directory,
+```sh
+firebase deploy
+```
+# Technical Details
+ - Webpage with Bootstrap syling and Javascript logic
+ - Uses Jquery to load all page views into splash and index pages
+ - Firebase database to store information. 
+ - Node.js EasyPost API to automatically create shipping labels and pay for them
+# Handoff Tasks
+1. Take over Square1 Firebase account
+2. Fork or take over Github repository
+# Contact
+Nicholas McCombe
+nicholasmccombe2017@u.northwestern.edu 
 
-
-Square1 is: 
-* Built with Bootstrap  and Javascript 
-* Firebase database to store information. 
-* Code currently hosted on Firebase static-page
-* It calls on the Node.js EasyPost API to automatically create shipping labels and pay for them. 
-
-
-
-#To still finish: 
-* Complete integration of the shipping page onto the actual website
-* * To do this, the app needs to be converted to Node.js.
-* Deploy to a non-static server (e.g. Heroku, versus the current Firebase)
-	
-
-#Installing
-##To download this application: 
-* Open terminal or Command Line.
-* Navigate to the folder you want the code to be in. 
-* Run the following command: 
-	
-		git clone https://github.com/eecs394-s16/square1.git
-	
-##To deploy the website to Firebase after making changes: 
-* Navigate to root directory
-* If it's your first time deploying to firebase, run the following command:
-
-		$ npm install -g firebase-tools
-*Always run this command:
-
-		$ firebase deploy
-For other inquires on deploying to Firebase, refer here:
-https://www.firebase.com/docs/hosting/command-line-tool.html
-
-##Running the shipping page
-* Install node.js
-* Navigate to folder containing shipping.js via command line
-* Run the following command:
- 
-		$Node index.js
-	
-		
-	
