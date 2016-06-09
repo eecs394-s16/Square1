@@ -1143,13 +1143,4 @@ driver = {
 
     globalref.unauth();
   },
-}.label_url);
-        postage_label = shipment.postage_label.label_url;
-      });
-    });
-  },
-  logout: function(e){
-
-    globalref.unauth();
-  },
 }
